@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>AngularJS: STT Application</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+</head>
+
+<body>
+  <div class="container">
+    <h2>AngularJS: STT Application</h2>
+    <div class="alert alert-info">
+      <button type="button" class="btn btn-default" aria-label="Stop" id="stopAudio">Stop</button>
+      <button type="button" class="btn btn-default" aria-label="Play" id="recordAudio">Play</button>
+    </div>
+    <div class="alert alert-info">
+      <label>Voice Listener</label>
+      <input type="text" id="resultsText" class="form-control">
+    </div>
+    <div class="alert alert-danger">
+      <canvas id="canvas" width="960" height="368"></canvas>
+      <div id="confusion-networks">
+        <div id="canvas-placeholder">Alternative Words</div>
+        <input id="vslider" type="range" orient="vertical">
+      </div>
+      <input id="hslider" type="range" style="display:none;">
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <script src="node_modules/angular/angular.min.js"></script>
+  <script src="js/stt.js"></script>
+</body>
+
+</html>

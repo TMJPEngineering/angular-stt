@@ -1,0 +1,42 @@
+{
+  "name": "angular-stt",
+  "version": "1.0.0",
+  "description": "Sample AngularJS Application for the IBM Watson Speech to Text Service",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TMJPEngineering/angular-stt.git"
+  },
+  "keywords": [
+    "AngularJS"
+  ],
+  "author": "TMJP Web Development Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TMJPEngineering/angular-stt/issues"
+  },
+  "homepage": "https://github.com/TMJPEngineering/angular-stt#readme",
+  "dependencies": {
+    "angular": "^1.5.8",
+    "body-parser": "^1.15.2",
+    "browserify-shim": "^3.8.12",
+    "cookie-parser": "^1.4.3",
+    "csurf": "^1.9.0",
+    "dotenv": "^2.0.0",
+    "express": "^4.14.0",
+    "express-browserify": "^1.0.2",
+    "helmet": "^3.1.0",
+    "vcap_services": "^0.2.0",
+    "watson-developer-cloud": "^2.9.0"
+  },
+  "browserify-shim": {
+    "jquery": "global:jQuery"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  }
+}
