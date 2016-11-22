@@ -1,122 +1,121 @@
-/**
- * Copyright 2015 IBM Corp. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+(function () {
+    'use strict';
 
-'use strict';
+    angular
+        .module('utils', [])
+        .factory('utils', utils);
 
-// For non-view logic
-var $ = require('jquery');
+    utils.$inject = ['$http', '$q'];
 
-var fileBlock = function(_offset, length, _file, readChunk) {
-  var r = new FileReader();
-  var blob = _file.slice(_offset, length + _offset);
-  r.onload = readChunk;
-  r.readAsArrayBuffer(blob);
-};
-
-var getCookie = function(name) {
-    var value = "; " + document.cookie;
-    var parts = value.split("; " + name + "=");
-    if (parts.length == 2) return parts.pop().split(";").shift();
-};
-
-// Based on alediaferia's SO response
-// http://stackoverflow.com/questions/14438187/javascript-filereader-parsing-long-file-in-chunks
-exports.onFileProgress = function(options, ondata, running, onerror, onend, samplingRate) {
-  var file = options.file;
-  var fileSize = file.size;
-  var chunkSize = options.bufferSize || 16000;  // in bytes
-  var offset = 0;
-  var readChunk = function(evt) {
-    if (offset >= fileSize) {
-      console.log('Done reading file');
-      onend();
-      return;
-    }
-    if (!running()) {
-      return;
-    }
-    if (evt.target.error == null) {
-      var buffer = evt.target.result;
-      var len = buffer.byteLength;
-      offset += len;
-      // console.log('sending: ' + len);
-      ondata(buffer); // callback for handling read chunk
-    } else {
-      var errorMessage = evt.target.error;
-      console.log('Read error: ' + errorMessage);
-      onerror(errorMessage);
-      return;
-    }
-    // use this timeout to pace the data upload for the playSample case,
-    // the idea is that the hyps do not arrive before the audio is played back
-    if (samplingRate) {
-      // console.log('samplingRate: ' +
-      //  samplingRate + ' timeout: ' + (chunkSize * 1000) / (samplingRate * 2));
-      setTimeout(function() {
-        fileBlock(offset, chunkSize, file, readChunk);
-      }, (chunkSize * 1000) / (samplingRate * 2));
-    } else {
-      fileBlock(offset, chunkSize, file, readChunk);
-    }
-  };
-  fileBlock(offset, chunkSize, file, readChunk);
-};
-
-exports.createTokenGenerator = function() {
-  // Make call to API to try and get token
-  var hasBeenRunTimes = 0;
-  return {
-    getToken: function(callback) {
-      ++hasBeenRunTimes;
-      if (hasBeenRunTimes > 5) {
-        var err = new Error('Cannot reach server');
-        callback(null, err);
-        return;
-      }
-      var url = '/api/token';
-      var tokenRequest = new XMLHttpRequest();
-      tokenRequest.open('POST', url, true);
-      tokenRequest.setRequestHeader('csrf-token', getCookie("XSRF-TOKEN"));
-      tokenRequest.onreadystatechange = function() {
-        if (tokenRequest.readyState === 4) {
-          if (tokenRequest.status === 200) {
-            var token = tokenRequest.responseText;
-            callback(null, token);
-          } else {
-            var error = 'Cannot reach server';
-            if (tokenRequest.responseText){
-              try {
-                error = JSON.parse(tokenRequest.responseText);
-              } catch (e) {
-                error = tokenRequest.responseText;
-              }
-            }
-            callback(error);
-          }
+    function utils($http, $q) {
+        var factory = {
+            onFileProgress: onFileProgress,
+            createTokenGenerator: createTokenGenerator
         }
-      };
-      tokenRequest.send();
-    },
-    getCount: function() { return hasBeenRunTimes; }
-  };
-};
 
-exports.initPubSub = function() {
-  var o = $({});
-  $.subscribe = o.on.bind(o);
-  $.unsubscribe = o.off.bind(o);
-  $.publish = o.trigger.bind(o);
-};
+        return factory;
+
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length == 2) return parts.pop().split(";").shift();
+        };
+
+        function fileBlock(_offset, length, _file, readChunk) {
+            var r = new FileReader();
+            var blob = _file.slice(_offset, length + _offset);
+            r.onload = readChunk;
+            r.readAsArrayBuffer(blob);
+        }
+
+        function onFileProgress() {
+            var file = options.file;
+            var fileSize = file.size;
+            var chunkSize = options.bufferSize || 16000;  // in bytes
+            var offset = 0;
+            var readChunk = function(evt) {
+                if (offset >= fileSize) {
+                  console.log('Done reading file');
+                  onend();
+                  return;
+            }
+            if (!running()) {
+              return;
+            }
+            if (evt.target.error == null) {
+              var buffer = evt.target.result;
+              var len = buffer.byteLength;
+              offset += len;
+              // console.log('sending: ' + len);
+              ondata(buffer); // callback for handling read chunk
+            } else {
+              var errorMessage = evt.target.error;
+              console.log('Read error: ' + errorMessage);
+              onerror(errorMessage);
+              return;
+            }
+            // use this timeout to pace the data upload for the playSample case,
+            // the idea is that the hyps do not arrive before the audio is played back
+            if (samplingRate) {
+              // console.log('samplingRate: ' +
+              //  samplingRate + ' timeout: ' + (chunkSize * 1000) / (samplingRate * 2));
+              setTimeout(function() {
+                fileBlock(offset, chunkSize, file, readChunk);
+              }, (chunkSize * 1000) / (samplingRate * 2));
+            } else {
+              fileBlock(offset, chunkSize, file, readChunk);
+            }
+            };
+            fileBlock(offset, chunkSize, file, readChunk);
+        }
+
+        function createTokenGenerator() {
+            var hasBeenRunTimes = 0;
+              return {
+                getToken: function(callback) {
+                  ++hasBeenRunTimes;
+
+                  if (hasBeenRunTimes > 5) {
+                    var err = new Error('Cannot reach server');
+                    // callback(null, err);
+                    return $q.reject(err);
+                  }
+
+                  return $http.post('/api/token', {
+                      headers: {
+                          'csrf-token': getCookie("XSRF-TOKEN")
+                      }
+                  }).then(function (response) {
+                        var token = tokenRequest.responseText;
+                        return token;
+                        // callback(null, token);
+                  }, function(err){
+                        var error = 'Cannot reach server';
+                        // callback(error);
+                        return error;
+                  });
+                  
+                },
+                getCount: function() { return hasBeenRunTimes; }
+              };
+            };
+        }
+})();
+
+
+// utils.getToken(function (test, result) {
+//     if (result == error) error
+//     else success
+//     console.log()
+// });
+
+// utils.getToken().then(function () {
+
+// }, function () {
+
+// })
+
+// var promise = new Promise(success, error);
+// promise.then();
+
+// q library
