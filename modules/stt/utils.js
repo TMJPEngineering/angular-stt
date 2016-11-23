@@ -9,7 +9,8 @@
     function utils($http, $q) {
         var factory = {
             getCookie: getCookie,
-            createTokenGenerator: createTokenGenerator
+            createTokenGenerator: createTokenGenerator,
+            ctx: {}
         };
 
         return factory;
