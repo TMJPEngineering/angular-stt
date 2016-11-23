@@ -2,7 +2,11 @@
     'use strict';
 
     angular
-        .module('stt', ['utils'])
+        .module('stt', [
+            'utils',
+            'views',
+            'microphone'
+        ])
         .controller('MainController', MainController);
     MainController.$inject = ['$scope', 'utils'];
 

@@ -6,7 +6,7 @@
     var display = require('./views/displaymetadata');*/
 
     angular
-        .module('')
+        .module('microphone')
         .factory('microphoneHandler', microphoneHandler);
     microphoneHandler.$inject = [];
 
