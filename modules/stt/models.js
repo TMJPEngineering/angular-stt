@@ -2,7 +2,7 @@
     'use strict'
 
     angular
-        .module('di ko alam')
+        .module('stt')
         .factory('models', models);
     models.$inject = ['$http'];
 
