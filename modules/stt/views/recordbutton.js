@@ -1,85 +1,71 @@
-/**
- * Copyright 2014 IBM Corp. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/* global $ */
-'use strict';
+(function(){
+    'use strict';
 
-var Microphone = require('../Microphone');
-var handleMicrophone = require('../handlemicrophone').handleMicrophone;
-var showError = require('./showerror').showError;
+    // var Microphone = require('../Microphone');
+    // var handleMicrophone = require('../handlemicrophone').handleMicrophone;
+    // replaced by toast
+    // var showError = require('./showerror').showError;
 
-exports.initRecordButton = function(ctx) {
+    angular
+        .module('views', ['utils'])
+        .directive('recordAudio', recordAudio);
 
-    var recordAudio = $('#recordAudio');
-    var stopAudio = $('#stopAudio');
-    // var child = $('#child');
-    var qs = $('#qs');
-    var stop = function () {
-        var micOptions = {
-            bufferSize: ctx.buffersize
-        };
-        var mic = new Microphone(micOptions);
-
-        return function(evt) {
-            evt.preventDefault();
-            $('#reading').text('Stopping ...');
-            console.log('Stopping microphone, sending stop action message');
-            recordAudio.removeAttr('style');
-            $.publish('hardsocketstop');
-            mic.stop();
-            $('#stopAudio').attr('disabled', 'disabled');
-            $('#recordAudio').attr('disabled', false);
-            $('#reading').text('');
-            localStorage.setItem('currentlyDisplaying', 'false');
+    function recordAudio() {
+        var directive = {
+            restrict: 'E',
+            template: '<button type="button" class="btn btn-default" aria-label="Play" id="recordAudio">Play</button>',
+            link: linkFn
         }
-    };
 
-    recordAudio.click((function() {
-        var token = ctx.token;
-        var micOptions = {
-            bufferSize: ctx.buffersize
-        };
-        var mic = new Microphone(micOptions);
+        return directive;
 
-        return function(evt) {
-            evt.preventDefault();
-            var currentModel = localStorage.getItem('currentModel');
-            localStorage.setItem('currentlyDisplaying', 'record');
-            $('#resultsText').val('');
-            $('#reading').text('Starting ...');
-            console.log('Not running, handleMicrophone()');
-            handleMicrophone(token, currentModel, mic, function(err) {
-                if (err) {
-                    var msg = 'Error: ' + err.message;
-                    console.log(msg);
-                    showError(msg);
-                    localStorage.setItem('currentlyDisplaying', 'false');
+        function linkFn(scope, element, attr) {
+            var running = false;
+            var token = ctx.token;
+            var micOptions = {
+              bufferSize: ctx.buffersize
+            };
+            var mic = new Microphone(micOptions);
+            
+            element.on('click', function(evt){
+                evt.preventDefault();
+                var currentModel = localStorage.getItem('currentModel');
+                var currentlyDisplaying = localStorage.getItem('currentlyDisplaying');
+
+                if (currentlyDisplaying == 'sample' || currentlyDisplaying == 'fileupload') {
+                    showError('Currently another file is playing, please stop the file or wait until it finishes');
+                    return;
+                }
+
+                localStorage.setItem('currentlyDisplaying', 'record');
+                if (!running) {
+                    $('#resultsText').val('');   // clear hypotheses from previous runs
+                    console.log('Not running, handleMicrophone()');
+                    handleMicrophone(token, currentModel, mic, function(err) {
+                      if (err) {
+                        var msg = 'Error: ' + err.message;
+                        console.log(msg);
+                        showError(msg);
+                        running = false;
+                        localStorage.setItem('currentlyDisplaying', 'false');
+                      } else {
+                        recordButton.css('background-color', '#d74108');
+                        recordButton.find('img').attr('src', 'images/stop.svg');
+                        console.log('starting mic');
+                        mic.record();
+                        running = true;
+                      }
+                    });
                 } else {
-                    recordAudio.css('background-color', '#d74108');
-                    console.log('starting mic');
-                    mic.record();
-                    $('#recordAudio').attr('disabled', 'disabled');
-                    $('#stopAudio').attr('disabled', false);
-                    $('#resultsText').focus();
-                    $('#reading').text('Reading ...');
+                    console.log('Stopping microphone, sending stop action message');
+                    recordButton.removeAttr('style');
+                    recordButton.find('img').attr('src', 'images/microphone.svg');
+                    $.publish('hardsocketstop');
+                    mic.stop();
+                    running = false;
+                    localStorage.setItem('currentlyDisplaying', 'false');
                 }
             });
-        };
-    })());
-
-    stopAudio.click((stop)());
-    qs.click((stop)());
-    // child.click((stop)());
-};
+        }
+    }
+})();
