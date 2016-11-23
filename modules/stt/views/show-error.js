@@ -2,16 +2,15 @@
     'use strict';
 
     angular
-        .module('diko alam')
+        .module('views')
         .factory('notification', notification);
     notification.$inject = ['toast']
 
     function notification(toast) {
         var factory = {
             showError: showError,
-            showNotice: showNotice,
-            hideError: hideError
-        }
+            showNotice: showNotice
+        };
 
         return factory;
 
@@ -19,7 +18,6 @@
             console.log('Error ', msg);
             toast.error(msg);
         }
-
 
         function showNotice(msg) {
             console.log('Error ', msg);

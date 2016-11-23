@@ -2,11 +2,11 @@
     'use strict';
 
     angular
-        .module('di ko alam')
+        .module('views')
         .factory('initialize', initialize);
 
-    var initRecordButton = require('./recordbutton').initRecordButton;
-    var initDisplayMetadata = require('./displaymetadata').initDisplayMetadata;
+    // var initRecordButton = require('./recordbutton').initRecordButton;
+    // var initDisplayMetadata = require('./displaymetadata').initDisplayMetadata;
 
     function initialize() {
         var factory = {
@@ -15,9 +15,10 @@
 
         return factory;
 
-        function initViews(ctx) {
+        function initViews(context) {
             console.log('Initializing views...');
-            initRecordButton(ctx);
+            console.log('context', context);
+            initRecordButton(context);
             initDisplayMetadata();
         }
     }

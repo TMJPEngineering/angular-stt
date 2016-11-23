@@ -4,7 +4,6 @@
     angular
         .module('utils', [])
         .factory('utils', utils);
-
     utils.$inject = ['$http', '$q'];
 
     function utils($http, $q) {
