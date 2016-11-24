@@ -3,9 +3,9 @@
 
     angular.module('socket')
         .factory('socketFactory', socketFactory);
-    socketFactory.$inject = [];
+    socketFactory.$inject = ['$rootScope'];
 
-    function socketFactory() {
+    function socketFactory($rootScope) {
         var factory = {
             connect: connect,
             initSocket: initSocket
@@ -40,12 +40,12 @@
                 listening = false;
 
                 // TODO: Convert to Angular Event
-                $.subscribe('hardsocketstop', function() {
+                $rootScope.$on('hardsocketstop', function() {
                     console.log('MICROPHONE: close.');
                     socket.send(JSON.stringify({ action: 'stop' }));
                     socket.close();
                 });
-                $.subscribe('socketstop', function() {
+                $rootScope.$on('socketstop', function() {
                     console.log('MICROPHONE: close.');
                     socket.close();
                 });
@@ -60,7 +60,7 @@
                     // TODO: Change to toast
                     showError(message.error);
                     // TODO: Change to Angular Event
-                    $.publish('hardsocketstop');
+                    $rootScope.$emit('hardsocketstop');
                     return;
                 }
 
@@ -82,7 +82,7 @@
                 // TODO: Change to toast
                 showError('Application error ' + event.code + ': please refresh your browser and try again');
                 // TODO: Change to Angular Event
-                $.publish('clearscreen');
+                $rootScope.$emit('clearscreen');
                 onError(event);
             };
 
@@ -93,13 +93,13 @@
                     console.log('generator count', tokenGenerator.getCount());
                     if (tokenGenerator.getCount() > 1) {
                         // TODO: Change to Angular Event
-                        $.publish('hardsocketstop');
+                        $rootScope.$emit('hardsocketstop');
                         throw new Error('No authorization token is currently available');
                     }
                     tokenGenerator.getToken(function(error, token) {
                         if (error) {
                             // TODO: Change to Angular Event
-                            $.publish('hardsocketstop');
+                            $rootScope.$emit('hardsocketstop');
                             return false;
                         }
                         console.log('Fetching additional token...');
@@ -122,8 +122,8 @@
 
                 // TODO: Change to Angular Event
                 // Made it through, normal close
-                $.unsubscribe('hardsocketstop');
-                $.unsubscribe('socketstop');
+                // $.unsubscribe('hardsocketstop');
+                // $.unsubscribe('socketstop');
 
                 onClose(event);
             }

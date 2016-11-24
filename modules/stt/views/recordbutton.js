@@ -55,8 +55,8 @@
                                 localStorage.setItem('currentlyDisplaying', 'false');
                                 console.log('Running = false');
                             } else {
-                                recordButton.css('background-color', '#d74108');
-                                recordButton.find('img').attr('src', 'images/stop.svg');
+                                element.css('background-color', '#d74108');
+                                element.find('img').attr('src', 'images/stop.svg');
                                 console.log('starting mic');
                                 mic.record();
                                 running = true;
@@ -65,9 +65,9 @@
                     });
                 } else {
                     console.log('Stopping microphone, sending stop action message');
-                    recordButton.removeAttr('style');
-                    recordButton.find('img').attr('src', 'images/microphone.svg');
-                    $.publish('hardsocketstop');
+                    element.removeAttr('style');
+                    element.find('img').attr('src', 'images/microphone.svg');
+                    $rootScope.emit('hardsocketstop');
                     mic.stop();
                     running = false;
                     localStorage.setItem('currentlyDisplaying', 'false');
