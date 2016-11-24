@@ -57,6 +57,39 @@
                 'smart_formatting': true
             };
             options.model = model;
+
+             function onOpen(socket) {
+                console.log('Mic socket: opened');
+                callback(null, socket);
+            }
+
+            function onListening(socket) {
+                mic.onAudio = function(blob) {
+                    if (socket.readyState < 2) {
+                    socket.send(blob);
+                    }
+                };
+            }
+
+            function onMessage(msg) {
+                if (msg.results) {
+                // Convert to closure approach
+                    baseString = display.showResult(msg, baseString, model);
+                    baseJSON = JSON.stringify(msg, null, 2);
+                    display.showJSON(baseJSON);
+                }
+            }
+
+            function onError() {
+            console.log('Mic socket err: ', err);
+            }
+
+            function onClose(evt) {
+            console.log('Mic socket close: ', evt);
+            }
+
+            // initSocket(options, onOpen, onListening, onMessage, onError, onClose);
+            // };
         }
     }
 })();
