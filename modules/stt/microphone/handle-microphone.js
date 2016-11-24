@@ -1,16 +1,16 @@
-(function(){
+(function() {
     'use strict';
 
-//yet to add socket and displaymetadata.js
-/*    var initSocket = require('./socket').initSocket;
-    var display = require('./views/displaymetadata');*/
+    //yet to add socket and displaymetadata.js
+    /*    var initSocket = require('./socket').initSocket;
+        var display = require('./views/displaymetadata');*/
 
     angular
         .module('microphone')
         .factory('microphoneHandler', microphoneHandler);
-    microphoneHandler.$inject = ['$rootScope'];
+    microphoneHandler.$inject = ['$rootScope', 'socketFactory'];
 
-    function microphoneHandler($rootScope) {
+    function microphoneHandler($rootScope, socketFactory) {
         var factory = {
             handleMicrophone: handleMicrophone
         }
@@ -19,6 +19,7 @@
 
         function handleMicrophone(token, model, mic, callback) {
             console.log('handleMicrophone');
+            console.log(token, model);
             if (model.indexOf('Narrowband') > -1) {
                 var err = new Error('Microphone transcription cannot accomodate narrowband models, ' +
                     'please select another');
@@ -57,8 +58,9 @@
                 'smart_formatting': true
             };
             options.model = model;
+            console.log('options', options);
 
-             function onOpen(socket) {
+            function onOpen(socket) {
                 console.log('Mic socket: opened');
                 callback(null, socket);
             }
@@ -66,30 +68,28 @@
             function onListening(socket) {
                 mic.onAudio = function(blob) {
                     if (socket.readyState < 2) {
-                    socket.send(blob);
+                        socket.send(blob);
                     }
                 };
             }
 
-            function onMessage(msg) {
-                if (msg.results) {
-                // Convert to closure approach
-                    baseString = display.showResult(msg, baseString, model);
-                    baseJSON = JSON.stringify(msg, null, 2);
-                    display.showJSON(baseJSON);
+            function onMessage(message) {
+                if (message.results) {
+                    // Convert to closure approach
+                    console.log('before: showResult() called');
+                    // baseString = display.showResult(message, baseString, model);
                 }
             }
 
-            function onError() {
-            console.log('Mic socket err: ', err);
+            function onError(error) {
+                console.log('Mic socket error: ', error);
             }
 
-            function onClose(evt) {
-            console.log('Mic socket close: ', evt);
+            function onClose(event) {
+                console.log('Mic socket close: ', event);
             }
 
-            // initSocket(options, onOpen, onListening, onMessage, onError, onClose);
-            // };
+            socketFactory.initSocket(options, onOpen, onListening, onMessage, onError, onClose);
         }
     }
 })();
