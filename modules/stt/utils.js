@@ -10,7 +10,8 @@
         var factory = {
             getCookie: getCookie,
             createTokenGenerator: createTokenGenerator,
-            ctx: {}
+            getContext: {},
+            setContext: setContext
         };
 
         return factory;
@@ -26,12 +27,12 @@
             console.log('createTokenGenerator');
             var hasBeenRunTimes = 0;
             return {
-                getToken: function(callback) {
+                getToken: function() {
+                    console.log('getToken');
                     ++hasBeenRunTimes;
 
                     if (hasBeenRunTimes > 5) {
                         var err = new Error('Cannot reach server');
-                        // callback(null, err);
                         return $q.reject(err);
                     }
 
@@ -40,15 +41,21 @@
                             'csrf-token': getCookie("_csrf")
                         }
                     }).then(function(response) {
-                        console.log(response);
-                    }, function(err) {
-                        console.log(err);
+                        return response;
+                    }, function(error) {
+                        return error;
                     });
                 },
                 getCount: function() {
                     return hasBeenRunTimes;
                 }
             };
-        };
+        }
+
+        function setContext(context) {
+            console.log(context)
+            console.log('setContext called')
+            factory.getContext = context;
+        }
     }
 })();

@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express'),
     app = express(),
     http = require('http'),
@@ -17,5 +19,7 @@ require('./config/lib/stt')(app);
 require('./config/lib/express')(app);
 require('./config/lib/security')(app);
 
-app.listen(4000);
-console.log('Node development server started on http://localhost:4000');
+var port = process.env.NODE_PORT;
+
+app.listen(port);
+console.log('Node development server started on http://localhost:' + port);

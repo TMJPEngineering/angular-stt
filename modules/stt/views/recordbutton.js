@@ -25,12 +25,13 @@
 
         function linkFn(scope, element, attr) {
             var running = false;
-            var token = utils.ctx.token;
+            var token = utils.getContext.token;
             var micOptions = {
-                bufferSize: utils.ctx.buffersize
+                bufferSize: utils.getContext.bufferSize
             };
-            var mic = new AngularMicrophone(micOptions);
 
+            var mic = new AngularMicrophone(micOptions);
+            
             element.on('click', function(evt) {
                 evt.preventDefault();
                 var currentModel = localStorage.getItem('currentModel');
