@@ -25,11 +25,10 @@
 
         function linkFn(scope, element, attr) {
             var running = false;
-            var token = utils.ctx.token;
+            var token = utils.getContext.token;
             var micOptions = {
-                bufferSize: utils.ctx.buffersize
+                bufferSize: utils.getContext.bufferSize
             };
-            
 
             element.on('click', function(evt) {
                 evt.preventDefault();

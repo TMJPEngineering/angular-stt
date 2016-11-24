@@ -12,29 +12,20 @@
         }
         return factory;
 
-        function getModels() {
-            var viewContext = {
-                currentModel: 'ja-JP_BroadbandModel',
-                models: {
-                    "url": "https://stream.watsonplatform.net/speech-to-text/api/v1/models/ja-JP_BroadbandModel",
-                    "rate": 16000,
-                    "name": "ja-JP_BroadbandModel",
-                    "language": "ja-JP",
-                    "description": "Japanese broadband model."
-                },
-                token: token,
-                bufferSize: BUFFERSIZE
-            };
+        function getModels(viewContext) {
+            console.log('getModels() called')
             var modelUrl = 'https://stream.watsonplatform.net/speech-to-text/api/v1/models';
 
             $http({
                 method: "GET",
                 url: modelUrl,
                 withCredentials: true,
-                headers: { 'Accept': 'application/json', 'X-Watson-Authorization-Token': token }
-            }).then(function mySucces(response) {
+                headers: { 'Accept': 'application/json', 'X-Watson-Authorization-Token': viewContext.token }
+            }).then(function (response) {
                 console.log('Success');
-            }, function myError(response) {
+                console.log('response', response);
+            }, function (response) {
+                console.log('Error');
                 console.log(response);
             });
 
