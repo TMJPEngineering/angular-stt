@@ -7,10 +7,7 @@
     // var showError = require('./showerror').showError;
 
     angular
-        .module('views', [
-            'utils',
-            'microphone'
-        ])
+        .module('views')
         .directive('recordAudio', recordAudio);
     recordAudio.$inject = ['utils', 'MicrophoneFactory', 'microphoneHandler'];
 

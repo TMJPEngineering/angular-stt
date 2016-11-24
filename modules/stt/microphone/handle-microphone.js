@@ -8,9 +8,9 @@
     angular
         .module('microphone')
         .factory('microphoneHandler', microphoneHandler);
-    microphoneHandler.$inject = ['$rootScope', 'socketFactory'];
+    microphoneHandler.$inject = ['$rootScope', 'socketFactory', 'displaymetaFactory'];
 
-    function microphoneHandler($rootScope, socketFactory) {
+    function microphoneHandler($rootScope, socketFactory, displaymetaFactory) {
         var factory = {
             handleMicrophone: handleMicrophone
         }
@@ -77,7 +77,7 @@
                 if (message.results) {
                     // Convert to closure approach
                     console.log('before: showResult() called');
-                    // baseString = display.showResult(message, baseString, model);
+                    baseString = displaymetaFactory.showResults(message, baseString, model);
                 }
             }
 

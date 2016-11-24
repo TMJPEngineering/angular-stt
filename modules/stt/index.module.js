@@ -6,12 +6,13 @@
             'views',
             'microphone',
             'socket',
-            'models'
+            'models',
+            'toast'
         ])
         .controller('MainController', MainController);
-    MainController.$inject = ['$scope', 'utils', 'modelFactory', '$rootScope'];
+    MainController.$inject = ['$scope', 'utils', 'modelFactory', '$rootScope','initialize'];
 
-    function MainController($scope, utils, modelFactory, $rootScope) {
+    function MainController($scope, utils, modelFactory, $rootScope, initialize) {
         var vm = this;
 
         window.BUFFERSIZE = 8192;
@@ -49,6 +50,7 @@
                 };
 
                 utils.setContext(viewContext);
+                initialize.initViews(viewContext);
 
                 // Save model to localstorage
                 localStorage.setItem('models', JSON.stringify(model));
