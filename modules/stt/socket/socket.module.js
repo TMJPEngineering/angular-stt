@@ -1,5 +1,5 @@
 (function() {
     'use strict';
 
-    angular.module('utils', []);
+    angular.module('socket', []);
 })();

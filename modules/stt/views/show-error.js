@@ -1,10 +1,9 @@
 (function(){
     'use strict';
 
-    angular
-        .module('views')
+    angular.module('views')
         .factory('notification', notification);
-    notification.$inject = ['toast']
+    notification.$inject = ['toast'];
 
     function notification(toast) {
         var factory = {
