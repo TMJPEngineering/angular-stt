@@ -153,7 +153,8 @@
                     }
                     result = baseString + text;
                 }
-                $('#resultsText').html(result);
+                console.log('result', result);
+                $('#resultsText').val('test');
                 localStorage.setItem('result', result);
             }
             updateTextScroll();
