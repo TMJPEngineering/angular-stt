@@ -12,8 +12,9 @@
             'microphone'
         ])
         .directive('recordAudio', recordAudio);
+    recordAudio.$inject = ['utils', 'Microphone'];
 
-    function recordAudio() {
+    function recordAudio(utils, Microphone) {
         var directive = {
             restrict: 'E',
             template: '<button type="button" class="btn btn-default" aria-label="Play" id="recordAudio">Play</button>',
@@ -24,11 +25,11 @@
 
         function linkFn(scope, element, attr) {
             var running = false;
-            var token = ctx.token;
+            var token = utils.ctx.token;
             var micOptions = {
-                bufferSize: ctx.buffersize
+                bufferSize: utils.ctx.buffersize
             };
-            var mic = new Microphone(micOptions);
+            
 
             element.on('click', function(evt) {
                 evt.preventDefault();
@@ -55,7 +56,7 @@
                             recordButton.css('background-color', '#d74108');
                             recordButton.find('img').attr('src', 'images/stop.svg');
                             console.log('starting mic');
-                            mic.record();
+                            Microphone.record();
                             running = true;
                         }
                     });
@@ -64,7 +65,7 @@
                     recordButton.removeAttr('style');
                     recordButton.find('img').attr('src', 'images/microphone.svg');
                     $.publish('hardsocketstop');
-                    mic.stop();
+                    Microphone.stop();
                     running = false;
                     localStorage.setItem('currentlyDisplaying', 'false');
                 }

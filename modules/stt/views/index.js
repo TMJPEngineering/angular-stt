@@ -2,13 +2,14 @@
     'use strict';
 
     angular
-        .module('views')
+        .module('views', ['utils'])
         .factory('initialize', initialize);
+    initialize.$inject = ['utils']
 
     // var initRecordButton = require('./recordbutton').initRecordButton;
     // var initDisplayMetadata = require('./displaymetadata').initDisplayMetadata;
 
-    function initialize() {
+    function initialize(utils) {
         var factory = {
             initViews: initViews
         }
@@ -16,9 +17,10 @@
         return factory;
 
         function initViews(context) {
+            utils.ctx = context;
             console.log('Initializing views...');
-            console.log('context', context);
-            initRecordButton(context);
+            console.log('context', utils.ctx);
+            initRecordButton(utils.ctx);
             initDisplayMetadata();
         }
     }
