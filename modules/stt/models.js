@@ -12,7 +12,7 @@
         }
         return factory;
 
-        function getModels(viewContext) {
+        function getModels(token) {
             console.log('getModels() called')
             var modelUrl = 'https://stream.watsonplatform.net/speech-to-text/api/v1/models';
 
@@ -20,7 +20,7 @@
                 method: "GET",
                 url: modelUrl,
                 withCredentials: true,
-                headers: { 'Accept': 'application/json', 'X-Watson-Authorization-Token': viewContext.token }
+                headers: { 'Accept': 'application/json', 'X-Watson-Authorization-Token': token }
             }).then(function (response) {
                 console.log('Success');
                 console.log('response', response);

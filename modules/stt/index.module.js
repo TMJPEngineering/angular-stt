@@ -69,7 +69,7 @@
                 localStorage.setItem('sessionPermissions', 'true');
 
                 // getModels(token);
-                models.getModels(viewContext);
+                models.getModels(viewContext.token);
 
                 // $.subscribe('clearscreen', function() {
                 //     $('#resultsText').text('');

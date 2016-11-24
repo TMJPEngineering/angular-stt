@@ -2,11 +2,7 @@
     'use strict';
 
     angular
-        .module('microphone', [
-            'word-alternative',
-            'bin',
-            'scene'
-        ])
+        .module('microphone')
         .factory('MicrophoneFactory', MicrophoneFactory);
     MicrophoneFactory.$inject = [];
 
