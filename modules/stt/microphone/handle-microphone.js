@@ -5,18 +5,20 @@
 /*    var initSocket = require('./socket').initSocket;
     var display = require('./views/displaymetadata');*/
 
-    angular.module('microphone')
+    angular
+        .module('microphone')
         .factory('microphoneHandler', microphoneHandler);
-    microphoneHandler.$inject = [];
+    microphoneHandler.$inject = ['$rootScope'];
 
-    function microphoneHandler() {
+    function microphoneHandler($rootScope) {
         var factory = {
             handleMicrophone: handleMicrophone
-        };
+        }
 
         return factory;
 
         function handleMicrophone(token, model, mic, callback) {
+            console.log('handleMicrophone');
             if (model.indexOf('Narrowband') > -1) {
                 var err = new Error('Microphone transcription cannot accomodate narrowband models, ' +
                     'please select another');
@@ -24,19 +26,19 @@
                 return false;
             }
 
-            $.publish('clearscreen');
+            $rootScope.$emit('clearscreen');
 
-            $.subscribe('showjson', function() {
+            $rootScope.$on('showjson', function() {
                 var $resultsJSON = $('#resultsJSON');
                 $resultsJSON.val(baseJSON);
             });
 
             // Test out websocket
             var baseString = '';
-            var baseJSON = '';
+            // var baseJSON = '';
 
-            var keywords = display.getKeywordsToSearch();
-            var keywords_threshold = keywords.length == 0 ? null : 0.01;
+            // var keywords = display.getKeywordsToSearch();
+            // var keywords_threshold = keywords.length == 0 ? null : 0.01;
 
             var options = {};
             options.token = token;
@@ -50,8 +52,8 @@
                 'max_alternatives': 3,
                 'inactivity_timeout': 600,
                 'word_alternatives_threshold': 0.001,
-                'keywords_threshold': keywords_threshold,
-                'keywords': keywords,
+                // 'keywords_threshold': keywords_threshold,
+                // 'keywords': keywords,
                 'smart_formatting': true
             };
             options.model = model;
