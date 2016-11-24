@@ -1,17 +1,17 @@
 (function() {
     'use strict';
 
-    angular
-        .module('stt', [
+    angular.module('stt', [
             'utils',
             'views',
             'microphone',
-            'socket'
+            'socket',
+            'models'
         ])
         .controller('MainController', MainController);
-    MainController.$inject = ['$scope', 'utils', 'socket', 'models'];
+    MainController.$inject = ['$scope', 'utils', 'socket', 'modelFactory'];
 
-    function MainController($scope, utils, socket, models) {
+    function MainController($scope, utils, socket, modelFactory) {
         var vm = this;
 
         window.BUFFERSIZE = 8192;
@@ -68,8 +68,8 @@
                 localStorage.setItem('currentModel', 'ja-JP_BroadbandModel');
                 localStorage.setItem('sessionPermissions', 'true');
 
-                // getModels(token);
-                models.getModels(viewContext.token);
+                // getModel(token);
+                modelFactory.getModel(viewContext.token);
 
                 // $.subscribe('clearscreen', function() {
                 //     $('#resultsText').text('');
