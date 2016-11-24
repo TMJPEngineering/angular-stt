@@ -1,6 +1,10 @@
+'use strict';
+
 var express = require('express'),
     app = express(),
     http = require('http'),
+    server = http.Server(app),
+    io = require('socket.io')(server),
     expressBrowserify = require('express-browserify');
 
 require('dotenv').load({ silent: true });
@@ -17,5 +21,7 @@ require('./config/lib/stt')(app);
 require('./config/lib/express')(app);
 require('./config/lib/security')(app);
 
-app.listen(4000);
-console.log('Node development server started on http://localhost:4000');
+var port = process.env.NODE_PORT;
+
+server.listen(port);
+console.log('Node development server started on http://localhost:' + port);

@@ -5,18 +5,19 @@
         .module('stt', [
             'utils',
             'views',
-            'microphone'
+            'microphone',
+            'socket'
         ])
         .controller('MainController', MainController);
-    MainController.$inject = ['$scope', 'utils'];
+    MainController.$inject = ['$scope', 'utils', 'socket', 'models'];
 
-    function MainController($scope, utils) {
+    function MainController($scope, utils, socket, models) {
         var vm = this;
 
         window.BUFFERSIZE = 8192;
 
         angular.element(document).ready(function() {
-            var models = {
+            var model = {
                 "url": "https://stream.watsonplatform.net/speech-to-text/api/v1/models/ja-JP_BroadbandModel",
                 "rate": 16000,
                 "name": "ja-JP_BroadbandModel",
@@ -26,32 +27,31 @@
 
             var tokenGenerator = utils.createTokenGenerator();
 
-            tokenGenerator.getToken(function(err, token) {
+            tokenGenerator.getToken().then(function(response) {
+                console.log('response', response);
                 window.onbeforeunload = function() {
                     localStorage.clear();
                 };
 
-                if (!token) {
+                if (response.status !== 200) {
                     console.error('No authorization token available');
                     console.error('Attempting to reconnect...');
 
-                    if (err && err.code)
-                        showError('Server error ' + err.code + ': ' + err.error);
-                    else
-                        showError('Server error ' + err.code + ': please refresh your browser and try again');
+                    showError('Server error ' + response.status + ': ' + response.data);
                 }
 
+                var token = response.data;
                 var viewContext = {
                     currentModel: 'ja-JP_BroadbandModel',
-                    models: models,
+                    models: model,
                     token: token,
                     bufferSize: BUFFERSIZE
                 };
 
-                initViews(viewContext);
+                utils.setContext(viewContext);
 
-                // Save models to localstorage
-                localStorage.setItem('models', JSON.stringify(models));
+                // Save model to localstorage
+                localStorage.setItem('models', JSON.stringify(model));
 
                 // Check if playback functionality is invoked
                 localStorage.setItem('playbackON', false);
@@ -68,7 +68,8 @@
                 localStorage.setItem('currentModel', 'ja-JP_BroadbandModel');
                 localStorage.setItem('sessionPermissions', 'true');
 
-                getModels(token);
+                // getModels(token);
+                models.getModels(viewContext);
 
                 // $.subscribe('clearscreen', function() {
                 //     $('#resultsText').text('');
@@ -78,12 +79,12 @@
                 //     $('#metadataTableBody').empty();
                 // });
 
-                $scope.on('clearscreen', function(event, data) {
+                // TODO: Clearscreen
+                // $scope.on('clearscreen', function(event, data) {
+                // });
 
-                });
-
+                socket.connect(viewContext.token, viewContext.currentModel);
             });
-        })
+        });
     }
-
 })();
