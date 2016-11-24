@@ -47,21 +47,21 @@
                     console.log('Not running, handleMicrophone()');
                     console.log(token, currentModel);
                     microphoneHandler.handleMicrophone(token, currentModel, mic, function(err) {
-                        if (err) {
-                            var msg = 'Error: ' + err.message;
-                            console.log(msg);
-                            showError(msg);
-                            running = false;
-                            localStorage.setItem('currentlyDisplaying', 'false');
-                            console.log('Running = false');
-                        } else {
-                            recordButton.css('background-color', '#d74108');
-                            recordButton.find('img').attr('src', 'images/stop.svg');
-                            console.log('starting mic');
-                            mic.record();
-                            running = true;
-                            console.log('Running = trues')
-                        }
+                            if (err) {
+                                var msg = 'Error: ' + err.message;
+                                console.log(msg);
+                                showError(msg);
+                                running = false;
+                                localStorage.setItem('currentlyDisplaying', 'false');
+                                console.log('Running = false');
+                            } else {
+                                recordButton.css('background-color', '#d74108');
+                                recordButton.find('img').attr('src', 'images/stop.svg');
+                                console.log('starting mic');
+                                mic.record();
+                                running = true;
+                                console.log('Running = trues')
+                            }
                     });
                 } else {
                     console.log('Stopping microphone, sending stop action message');
