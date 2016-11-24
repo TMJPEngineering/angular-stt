@@ -12,37 +12,6 @@
             initDisplayMetadata: initDisplayMetadata
         };
 
-        const INITIAL_OFFSET_X = 30;
-        const INITIAL_OFFSET_Y = 30;
-        const fontSize = 16;
-        const delta_y = 2 * fontSize;
-        const radius = 5;
-        const space = 4;
-        const hstep = 32;
-        const timeout = 500;
-        const defaultFont = fontSize + 'px Arial';
-        const boldFont = 'bold ' + fontSize + 'px Arial';
-        const italicFont = 'italic ' + fontSize + 'px Arial';
-        const opacity = '0.6';
-
-        var showAllHypotheses = true;
-        var keywordsInputDirty = false;
-        var keywords_to_search = [];
-        var detected_keywords = {};
-        var canvas = document.getElementById('canvas');
-        var ctx = canvas.getContext('2d');
-        var hslider = document.getElementById('hslider');
-        var vslider = document.getElementById('vslider');
-        var leftArrowEnabled = false;
-        var rightArrowEnabled = false;
-        window.worker = null;
-        var runTimer = false;
-        var scrolled = false;
-        // var textScrolled = false;
-        var pushed = 0;
-        var popped = 0;
-        var scene = new SceneFactory;
-
         return factory;
 
         function initDisplayMetadata() {
