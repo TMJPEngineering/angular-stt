@@ -35,7 +35,7 @@
         var vslider = document.getElementById('vslider');
         var leftArrowEnabled = false;
         var rightArrowEnabled = false;
-        var worker = null;
+        window.worker = null;
         var runTimer = false;
         var scrolled = false;
         // var textScrolled = false;
