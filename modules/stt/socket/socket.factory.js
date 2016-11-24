@@ -3,9 +3,9 @@
 
     angular.module('socket')
         .factory('socketFactory', socketFactory);
-    socketFactory.$inject = ['$rootScope'];
+    socketFactory.$inject = ['$rootScope', 'utils'];
 
-    function socketFactory($rootScope) {
+    function socketFactory($rootScope, utils) {
         var factory = {
             connect: connect,
             initSocket: initSocket
@@ -35,6 +35,7 @@
             var message = options.message || { 'action': 'start' };
             console.log('options (initSocket):', options);
             var socket = connect(options.token, model);
+            var tokenGenerator = utils.createTokenGenerator();
 
             socket.onopen = function() {
                 listening = false;
