@@ -9,9 +9,9 @@
             'models'
         ])
         .controller('MainController', MainController);
-    MainController.$inject = ['$scope', 'utils', 'socket', 'modelFactory', '$rootScope'];
+    MainController.$inject = ['$scope', 'utils', 'modelFactory', '$rootScope'];
 
-    function MainController($scope, utils, socket, modelFactory, $rootScope) {
+    function MainController($scope, utils, modelFactory, $rootScope) {
         var vm = this;
 
         window.BUFFERSIZE = 8192;
@@ -82,8 +82,6 @@
                 // TODO: Clearscreen
                 // $scope.on('clearscreen', function(event, data) {
                 // });
-
-                socket.connect(viewContext.token, viewContext.currentModel);
             });
         });
     }

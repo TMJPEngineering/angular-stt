@@ -4,6 +4,7 @@
     angular.module('microphone', [
         'word-alternative',
         'bin',
-        'scene'
+        'scene',
+        'socket'
     ]);
 })();

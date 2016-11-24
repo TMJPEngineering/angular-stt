@@ -24,16 +24,15 @@
         return directive;
 
         function linkFn(scope, element, attr) {
-            var running = false;
-            var token = utils.getContext.token;
-            var micOptions = {
-                bufferSize: utils.getContext.bufferSize
-            };
-
-            var mic = new MicrophoneFactory(micOptions);
-            
             element.on('click', function(evt) {
                 evt.preventDefault();
+                var running = false;
+                var token = utils.getContext.token;
+                var micOptions = {
+                    bufferSize: utils.getContext.bufferSize
+                };
+
+                var mic = new MicrophoneFactory(micOptions);
                 var currentModel = localStorage.getItem('currentModel');
                 var currentlyDisplaying = localStorage.getItem('currentlyDisplaying');
 
@@ -46,6 +45,7 @@
                 if (!running) {
                     $('#resultsText').val(''); // clear hypotheses from previous runs
                     console.log('Not running, handleMicrophone()');
+                    console.log(token, currentModel);
                     microphoneHandler.handleMicrophone(token, currentModel, mic, function(err) {
                         if (err) {
                             var msg = 'Error: ' + err.message;
