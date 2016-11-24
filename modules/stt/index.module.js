@@ -9,9 +9,9 @@
             'socket'
         ])
         .controller('MainController', MainController);
-    MainController.$inject = ['$scope', 'utils', 'socket', 'models'];
+    MainController.$inject = ['$scope', 'utils', 'socket', 'models', '$rootScope'];
 
-    function MainController($scope, utils, socket, models) {
+    function MainController($scope, utils, socket, models, $rootScope) {
         var vm = this;
 
         window.BUFFERSIZE = 8192;
@@ -71,13 +71,13 @@
                 // getModels(token);
                 models.getModels(viewContext.token);
 
-                // $.subscribe('clearscreen', function() {
-                //     $('#resultsText').text('');
-                //     $('.error-row').hide();
-                //     $('.notification-row').hide();
-                //     $('.hypotheses > ul').empty();
-                //     $('#metadataTableBody').empty();
-                // });
+                $rootScope.$on('clearscreen', function() {
+                    $('#resultsText').text('');
+                    $('.error-row').hide();
+                    $('.notification-row').hide();
+                    $('.hypotheses > ul').empty();
+                    $('#metadataTableBody').empty();
+                });
 
                 // TODO: Clearscreen
                 // $scope.on('clearscreen', function(event, data) {

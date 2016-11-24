@@ -12,9 +12,9 @@
             'microphone'
         ])
         .directive('recordAudio', recordAudio);
-    recordAudio.$inject = ['utils', 'MicrophoneFactory'];
+    recordAudio.$inject = ['utils', 'MicrophoneFactory', 'microphoneHandler'];
 
-    function recordAudio(utils, MicrophoneFactory) {
+    function recordAudio(utils, MicrophoneFactory, microphoneHandler) {
         var directive = {
             restrict: 'E',
             template: '<button type="button" class="btn btn-default" aria-label="Play" id="recordAudio">Play</button>',
@@ -46,19 +46,21 @@
                 if (!running) {
                     $('#resultsText').val(''); // clear hypotheses from previous runs
                     console.log('Not running, handleMicrophone()');
-                    handleMicrophone(token, currentModel, mic, function(err) {
+                    microphoneHandler.handleMicrophone(token, currentModel, mic, function(err) {
                         if (err) {
                             var msg = 'Error: ' + err.message;
                             console.log(msg);
                             showError(msg);
                             running = false;
                             localStorage.setItem('currentlyDisplaying', 'false');
+                            console.log('Running = false');
                         } else {
                             recordButton.css('background-color', '#d74108');
                             recordButton.find('img').attr('src', 'images/stop.svg');
                             console.log('starting mic');
                             mic.record();
                             running = true;
+                            console.log('Running = trues')
                         }
                     });
                 } else {
