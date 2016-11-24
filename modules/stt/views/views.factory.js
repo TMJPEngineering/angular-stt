@@ -3,11 +3,9 @@
 
     angular.module('views')
         .factory('initialize', initialize);
-    initialize.$inject = ['utils'];
+    initialize.$inject = ['utils', 'displaymetaFactory'];
 
-    // var initRecordButton = require('./recordbutton').initRecordButton;
-    // var initDisplayMetadata = require('./displaymetadata').initDisplayMetadata;
-    function initialize(utils) {
+    function initialize(utils, displaymetaFactory) {
         var factory = {
             initViews: initViews
         };
@@ -15,11 +13,10 @@
         return factory;
 
         function initViews(context) {
-            utils.ctx = context;
+            utils.setContext(context);
             console.log('Initializing views...');
-            console.log('context', utils.ctx);
-            initRecordButton(utils.ctx);
-            initDisplayMetadata();
+            console.log('context', utils.getContext);
+            displaymetaFactory.initDisplayMetadata();
         }
     }
 

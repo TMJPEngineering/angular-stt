@@ -1,5 +1,8 @@
 (function(){
     'use strict';
 
-    angular.module('views', ['utils']);
+    angular.module('views', [
+        'utils',
+        'microphone'
+    ]);
 })();

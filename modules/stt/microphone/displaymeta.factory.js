@@ -4,13 +4,14 @@
     angular
         .module('microphone')
         .factory('displaymetaFactory', displaymetaFactory);
-    displaymetaFactory.$inject = [];
+    displaymetaFactory.$inject = ['SceneFactory'];
 
-    function displaymetaFactory() {
+    function displaymetaFactory(SceneFactory) {
         var factory = {
             showResults: showResults,
             initDisplayMetadata: initDisplayMetadata
-        }
+        };
+
         const INITIAL_OFFSET_X = 30;
         const INITIAL_OFFSET_Y = 30;
         const fontSize = 16;
@@ -40,10 +41,12 @@
         // var textScrolled = false;
         var pushed = 0;
         var popped = 0;
+        var scene = new SceneFactory;
 
-        return factory
+        return factory;
 
         function initDisplayMetadata() {
+            console.log('intiDisplayMetadata() called');
             // initTextScroll();
             keywordsInputDirty = false;
             hslider.min = 0;
@@ -98,6 +101,7 @@
                 popped++;
                 console.log('----> popped', popped);
             };
+            console.log('worker instantiate');
         }
 
         function showResults(msg, baseString, model) {
@@ -153,8 +157,8 @@
                     }
                     result = baseString + text;
                 }
-                console.log('result', result);
-                $('#resultsText').val('test');
+
+                $('#resultsText').val(result);
                 localStorage.setItem('result', result);
             }
             updateTextScroll();
