@@ -1,8 +1,7 @@
 (function() {
     'use strict';
 
-    angular
-        .module('microphone')
+    angular.module('word-alternative')
         .factory('WordAlternativeFactory', WordAlternativeFactory);
     WordAlternativeFactory.$inject = ['metadataFactory'];
 

@@ -1,8 +1,7 @@
 (function() {
     'use strict';
 
-    angular
-        .module('microphone', [])
+    angular.module('bin')
         .factory('BinFactory', BinFactory);
     BinFactory.$inject = [];
 
