@@ -299,8 +299,6 @@ Microphone.prototype.onStartRecording = function() {};
 Microphone.prototype.onStopRecording = function() {};
 Microphone.prototype.onAudio = function() {};
 
-module.exports = Microphone;
-
 Microphone.prototype.saveData = function(samples) {
     for (var i = 0; i < samples.length; ++i) {
         this.samplesAll[this.samplesAllOffset + i] = samples[i];

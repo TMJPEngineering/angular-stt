@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('socket')
+        .module('socket', [])
         .factory('socket', socket);
     socket.$inject = [];
 

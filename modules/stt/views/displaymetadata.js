@@ -677,11 +677,11 @@ $('#show_alternate_words').click(function( /*e*/ ) {
     toggleAlternateWords();
 });
 
-exports.showJSON = function(baseJSON) {
-    if ($('.nav-tabs .active').text() == 'JSON') {
-        $('#resultsJSON').val(baseJSON);
-    }
-};
+// exports.showJSON = function(baseJSON) {
+//     if ($('.nav-tabs .active').text() == 'JSON') {
+//         $('#resultsJSON').val(baseJSON);
+//     }
+// };
 
 function updateTextScroll() {
     if (!scrolled) {
@@ -723,62 +723,62 @@ function resetWorker() {
     console.log('---> resetWorker called');
 }
 
-exports.initDisplayMetadata = function() {
-    initTextScroll();
-    keywordsInputDirty = false;
-    hslider.min = 0;
-    hslider.max = 0;
-    hslider.value = hslider.min;
-    vslider.min = 0;
-    vslider.max = 0;
-    vslider.value = vslider.max;
-    $('#vslider').css('display', 'none');
-    $('#hslider').on('change mousemove', function() {
-        onHScroll();
-    });
-    $('#vslider').on('change mousemove', function() {
-        onVScroll();
-    });
+// exports.initDisplayMetadata = function() {
+//     initTextScroll();
+//     keywordsInputDirty = false;
+//     hslider.min = 0;
+//     hslider.max = 0;
+//     hslider.value = hslider.min;
+//     vslider.min = 0;
+//     vslider.max = 0;
+//     vslider.value = vslider.max;
+//     $('#vslider').css('display', 'none');
+//     $('#hslider').on('change mousemove', function() {
+//         onHScroll();
+//     });
+//     $('#vslider').on('change mousemove', function() {
+//         onVScroll();
+//     });
 
-    $('#canvas').css('display', 'none');
-    $('#canvas-placeholder').css('display', 'block');
-    $('#left-arrow').css('display', 'none');
-    $('#right-arrow').css('display', 'none');
+//     $('#canvas').css('display', 'none');
+//     $('#canvas-placeholder').css('display', 'block');
+//     $('#left-arrow').css('display', 'none');
+//     $('#right-arrow').css('display', 'none');
 
-    onResize(); // to adjust the canvas size
+//     onResize(); // to adjust the canvas size
 
-    var workerScriptBody =
-        'var fifo = [];\n' +
-        'var onmessage = function(event) {\n' +
-        '  var payload = event.data;\n' +
-        '  var type = payload.type;\n' +
-        '  if(type == \'push\') {\n' +
-        '    fifo.push(payload.msg);\n' +
-        '  }\n' +
-        '  else if(type == \'shift\' && fifo.length > 0) {\n' +
-        '    var msg = fifo.shift();\n' +
-        '    postMessage({\n' +
-        '     bins:msg.results[0].word_alternatives,\n' +
-        '     kws:msg.results[0].keywords_result\n' +
-        '    });\n' +
-        '  }\n' +
-        '  else if(type == \'clear\') {\n' +
-        '    fifo = [];\n' +
-        '    console.log(\'worker: fifo cleared\');\n' +
-        '  }\n' +
-        '}\n';
+//     var workerScriptBody =
+//         'var fifo = [];\n' +
+//         'var onmessage = function(event) {\n' +
+//         '  var payload = event.data;\n' +
+//         '  var type = payload.type;\n' +
+//         '  if(type == \'push\') {\n' +
+//         '    fifo.push(payload.msg);\n' +
+//         '  }\n' +
+//         '  else if(type == \'shift\' && fifo.length > 0) {\n' +
+//         '    var msg = fifo.shift();\n' +
+//         '    postMessage({\n' +
+//         '     bins:msg.results[0].word_alternatives,\n' +
+//         '     kws:msg.results[0].keywords_result\n' +
+//         '    });\n' +
+//         '  }\n' +
+//         '  else if(type == \'clear\') {\n' +
+//         '    fifo = [];\n' +
+//         '    console.log(\'worker: fifo cleared\');\n' +
+//         '  }\n' +
+//         '}\n';
 
-    var blobURL = window.URL.createObjectURL(new Blob([workerScriptBody]));
-    console.log("BLOB URL", blobURL);
-    worker = new Worker(blobURL);
-    worker.onmessage = function(event) {
-        var data = event.data;
-        // eslint-disable-next-line no-use-before-define
-        showCNsKWS(data.bins, data.kws);
-        popped++;
-        console.log('----> popped', popped);
-    };
-};
+//     var blobURL = window.URL.createObjectURL(new Blob([workerScriptBody]));
+//     console.log("BLOB URL", blobURL);
+//     worker = new Worker(blobURL);
+//     worker.onmessage = function(event) {
+//         var data = event.data;
+//         // eslint-disable-next-line no-use-before-define
+//         showCNsKWS(data.bins, data.kws);
+//         popped++;
+//         console.log('----> popped', popped);
+//     };
+// };
 
 function showCNsKWS(bins, kws) {
     bins.forEach(parseBin);
@@ -810,76 +810,76 @@ function onTimer() {
     }
 }
 
-exports.showResult = function(msg, baseString, model) {
-    if (msg.results && msg.results.length > 0) {
-        //var alternatives = msg.results[0].alternatives;
-        var text = msg.results[0].alternatives[0].transcript || '';
+// exports.showResult = function(msg, baseString, model) {
+//     if (msg.results && msg.results.length > 0) {
+//         //var alternatives = msg.results[0].alternatives;
+//         var text = msg.results[0].alternatives[0].transcript || '';
 
-        // apply mappings to beautify
-        text = text.replace(/%HESITATION\s/g, '');
-        //text = text.replace(/([^*])\1{2,}/g, '');   // seems to be getting in the way of smart formatting, 1000101 is converted to 1101
+//         // apply mappings to beautify
+//         text = text.replace(/%HESITATION\s/g, '');
+//         //text = text.replace(/([^*])\1{2,}/g, '');   // seems to be getting in the way of smart formatting, 1000101 is converted to 1101
 
-        if (msg.results[0].final) {
-            console.log('-> ' + text);
-            worker.postMessage({
-                type: 'push',
-                msg: msg
-            });
-            pushed++;
-            console.log('----> pushed', pushed);
-            if (runTimer == false) {
-                runTimer = true;
-                setTimeout(onTimer, timeout);
-            }
-        }
-        text = text.replace(/D_[^\s]+/g, '');
+//         if (msg.results[0].final) {
+//             console.log('-> ' + text);
+//             worker.postMessage({
+//                 type: 'push',
+//                 msg: msg
+//             });
+//             pushed++;
+//             console.log('----> pushed', pushed);
+//             if (runTimer == false) {
+//                 runTimer = true;
+//                 setTimeout(onTimer, timeout);
+//             }
+//         }
+//         text = text.replace(/D_[^\s]+/g, '');
 
-        // if all words are mapped to nothing then there is nothing else to do
-        if ((text.length == 0) || (/^\s+$/.test(text))) {
-            return baseString;
-        }
+//         // if all words are mapped to nothing then there is nothing else to do
+//         if ((text.length == 0) || (/^\s+$/.test(text))) {
+//             return baseString;
+//         }
 
-        var japanese = ((model.substring(0, 5) == 'ja-JP') || (model.substring(0, 5) == 'zh-CN'));
-        var result;
-        // capitalize first word
-        // if final results, append a new paragraph
-        if (msg.results && msg.results[0] && msg.results[0].final) {
-            text = text.slice(0, -1);
-            text = text.charAt(0).toUpperCase() + text.substring(1);
-            if (japanese) {
-                text = text.trim() + '。';
-                text = text.replace(/ /g, '');
-            } else {
-                text = text.trim() + '. ';
-            }
+//         var japanese = ((model.substring(0, 5) == 'ja-JP') || (model.substring(0, 5) == 'zh-CN'));
+//         var result;
+//         // capitalize first word
+//         // if final results, append a new paragraph
+//         if (msg.results && msg.results[0] && msg.results[0].final) {
+//             text = text.slice(0, -1);
+//             text = text.charAt(0).toUpperCase() + text.substring(1);
+//             if (japanese) {
+//                 text = text.trim() + '。';
+//                 text = text.replace(/ /g, '');
+//             } else {
+//                 text = text.trim() + '. ';
+//             }
 
-            baseString += text;
-            result = baseString;
-        } else {
-            if (japanese) {
-                text = text.replace(/ /g, ''); // remove whitespaces
-            } else {
-                text = text.charAt(0).toUpperCase() + text.substring(1);
-            }
-            result = baseString + text;
-        }
-        $('#resultsText').html(result);
-        localStorage.setItem('result', result);
-    }
-    updateTextScroll();
-    return baseString;
-};
+//             baseString += text;
+//             result = baseString;
+//         } else {
+//             if (japanese) {
+//                 text = text.replace(/ /g, ''); // remove whitespaces
+//             } else {
+//                 text = text.charAt(0).toUpperCase() + text.substring(1);
+//             }
+//             result = baseString + text;
+//         }
+//         $('#resultsText').html(result);
+//         localStorage.setItem('result', result);
+//     }
+//     updateTextScroll();
+//     return baseString;
+// };
 
-exports.getKeywordsToSearch = function() {
-    return keywords_to_search;
-};
+// exports.getKeywordsToSearch = function() {
+//     return keywords_to_search;
+// };
 
-$.subscribe('clearscreen', function() {
-    clearScene();
-    clearDetectedKeywords();
-    resetWorker();
-});
+// $.subscribe('clearscreen', function() {
+//     clearScene();
+//     clearDetectedKeywords();
+//     resetWorker();
+// });
 
-$(window).resize(function() {
-    onResize();
-});
+// $(window).resize(function() {
+//     onResize();
+// });

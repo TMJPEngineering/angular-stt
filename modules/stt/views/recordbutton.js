@@ -12,9 +12,9 @@
             'microphone'
         ])
         .directive('recordAudio', recordAudio);
-    recordAudio.$inject = ['utils', 'AngularMicrophone'];
+    recordAudio.$inject = ['utils', 'MicrophoneFactory'];
 
-    function recordAudio(utils, AngularMicrophone) {
+    function recordAudio(utils, MicrophoneFactory) {
         var directive = {
             restrict: 'E',
             template: '<button type="button" class="btn btn-default" aria-label="Play" id="recordAudio">Play</button>',
@@ -30,7 +30,7 @@
                 bufferSize: utils.getContext.bufferSize
             };
 
-            var mic = new AngularMicrophone(micOptions);
+            var mic = new MicrophoneFactory(micOptions);
             
             element.on('click', function(evt) {
                 evt.preventDefault();
