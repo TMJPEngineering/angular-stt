@@ -86,6 +86,7 @@ Microphone.prototype.onMediaStream = function(stream) {
     // uncomment the following line if you want to use your microphone sample rate
     // this.sampleRate = this.audioContext.sampleRate;
     console.log('Microphone.onMediaStream(): sampling rate is:', this.sampleRate);
+    console.log('----------------');
 
     this.mic.onaudioprocess = this._onaudioprocess.bind(this);
     this.stream = stream;

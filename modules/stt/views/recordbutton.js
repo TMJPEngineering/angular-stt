@@ -23,12 +23,10 @@
         function linkFn(scope, element, attr) {
             element.on('click', function(event) {
                 event.preventDefault();
-                var token = utils.getContext.token;
-                var config = {
+                var microphone = new MicrophoneFactory({
                     bufferSize: utils.getContext.bufferSize
-                };
-
-                var microphone = new MicrophoneFactory(config);
+                });
+                var token = utils.getContext.token;
                 var currentModel = localStorage.getItem('currentModel');
                 var currentlyDisplaying = localStorage.getItem('currentlyDisplaying');
 
