@@ -13,6 +13,7 @@
             initDisplayMetadata: initDisplayMetadata
         };
 
+        // ctx.font = defaultFont;
         return factory;
 
         function initDisplayMetadata() {
