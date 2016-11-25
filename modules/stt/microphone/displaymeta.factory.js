@@ -9,7 +9,8 @@
     function displaymetaFactory() {
         var factory = {
             showResults: showResults,
-            initDisplayMetadata: initDisplayMetadata
+            initDisplayMetadata: initDisplayMetadata,
+            worker: null
         }
         const INITIAL_OFFSET_X = 30;
         const INITIAL_OFFSET_Y = 30;
@@ -34,7 +35,7 @@
         var vslider = document.getElementById('vslider');
         var leftArrowEnabled = false;
         var rightArrowEnabled = false;
-        var worker = null;
+        // var worker = null;
         var runTimer = false;
         var scrolled = false;
         // var textScrolled = false;
@@ -90,8 +91,8 @@
 
             var blobURL = window.URL.createObjectURL(new Blob([workerScriptBody]));
             console.log("BLOB URL", blobURL);
-            worker = new Worker(blobURL);
-            worker.onmessage = function(event) {
+            factory.worker = new Worker(blobURL);
+            factory.worker.onmessage = function(event) {
                 var data = event.data;
                 // eslint-disable-next-line no-use-before-define
                 // showCNsKWS(data.bins, data.kws);
@@ -111,7 +112,7 @@
 
                 if (msg.results[0].final) {
                     console.log('-> ' + text);
-                    worker.postMessage({
+                    factory.worker.postMessage({
                         type: 'push',
                         msg: msg
                     });
@@ -153,8 +154,8 @@
                     }
                     result = baseString + text;
                 }
-                console.log('result', result);
-                $('#resultsText').val('test');
+                
+                $('#resultsText').val(result);
                 localStorage.setItem('result', result);
             }
             updateTextScroll();
@@ -248,7 +249,7 @@
 
         function resetWorker() {
             runTimer = false;
-            worker.postMessage({
+            factory.worker.postMessage({
                 type: 'clear'
             });
             pushed = 0;

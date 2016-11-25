@@ -3,13 +3,14 @@
 
     angular.module('socket')
         .factory('socketFactory', socketFactory);
-    socketFactory.$inject = ['$rootScope'];
+    socketFactory.$inject = ['$rootScope', 'notification', 'utils'];
 
-    function socketFactory($rootScope) {
+    function socketFactory($rootScope, notification, utils) {
         var factory = {
             connect: connect,
             initSocket: initSocket
         };
+        var tokenGenerator = utils.createTokenGenerator();
 
         return factory;
 
@@ -58,7 +59,7 @@
                 var message = JSON.parse(event.data)
                 if (message.error) {
                     // TODO: Change to toast
-                    showError(message.error);
+                    utils.showError(message.error);
                     // TODO: Change to Angular Event
                     $rootScope.$emit('hardsocketstop');
                     return;
@@ -80,7 +81,7 @@
             socket.onerror = function(event) {
                 console.log('WS onerror:', event);
                 // TODO: Change to toast
-                showError('Application error ' + event.code + ': please refresh your browser and try again');
+                notification.showError('Application error ' + event.code + ': please refresh your browser and try again');
                 // TODO: Change to Angular Event
                 $rootScope.$emit('clearscreen');
                 onError(event);
@@ -90,7 +91,7 @@
                 console.log('WS onclose:', event);
                 if (event.code === 1006) {
                     // Authentication error, try to reconnect
-                    console.log('generator count', tokenGenerator.getCount());
+                    console.log('generator count', utils);
                     if (tokenGenerator.getCount() > 1) {
                         // TODO: Change to Angular Event
                         $rootScope.$emit('hardsocketstop');
