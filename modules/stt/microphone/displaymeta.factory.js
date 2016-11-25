@@ -4,9 +4,9 @@
     angular
         .module('microphone')
         .factory('displaymetaFactory', displaymetaFactory);
-    displaymetaFactory.$inject = ['SceneFactory'];
+    displaymetaFactory.$inject = [];
 
-    function displaymetaFactory(SceneFactory) {
+    function displaymetaFactory() {
         var factory = {
             showResults: showResults,
             initDisplayMetadata: initDisplayMetadata
@@ -15,7 +15,7 @@
         return factory;
 
         function initDisplayMetadata() {
-            console.log('intiDisplayMetadata() called');
+            console.log('initDisplayMetadata() called');
             // initTextScroll();
             keywordsInputDirty = false;
             hslider.min = 0;
@@ -61,16 +61,13 @@
                 '}\n';
 
             var blobURL = window.URL.createObjectURL(new Blob([workerScriptBody]));
-            console.log("BLOB URL", blobURL);
             worker = new Worker(blobURL);
             worker.onmessage = function(event) {
                 var data = event.data;
-                // eslint-disable-next-line no-use-before-define
-                // showCNsKWS(data.bins, data.kws);
+                showCNsKWS(data.bins);
                 popped++;
-                console.log('----> popped', popped);
+                console.log('POPPED:', popped);
             };
-            console.log('worker instantiate');
         }
 
         function showResults(msg, baseString, model) {
@@ -83,13 +80,13 @@
                 //text = text.replace(/([^*])\1{2,}/g, '');   // seems to be getting in the way of smart formatting, 1000101 is converted to 1101
 
                 if (msg.results[0].final) {
-                    console.log('-> ' + text);
+                    console.log('TEXT:', text);
                     worker.postMessage({
                         type: 'push',
                         msg: msg
                     });
                     pushed++;
-                    console.log('----> pushed', pushed);
+                    console.log('PUSHED:', pushed);
                     if (runTimer == false) {
                         runTimer = true;
                         setTimeout(onTimer, timeout);
@@ -181,7 +178,6 @@
                 ctx.oBackingStorePixelRatio ||
                 ctx.backingStorePixelRatio || 1;
             var ratio = dpr / bsr;
-            console.log('dpr/bsr =', ratio);
             var w = $('#canvas').width();
             var h = $('#canvas').height();
             canvas.width = w * ratio;
@@ -226,7 +222,6 @@
             });
             pushed = 0;
             popped = 0;
-            console.log('---> resetWorker called');
         }
 
         $rootScope.on('clearscreen', function() {

@@ -16,18 +16,17 @@
         return factory;
 
         function getCookie(name) {
-            console.log('getCookie');
+            console.log('getCookie() called');
             var value = "; " + document.cookie;
             var parts = value.split("; " + name + "=");
             if (parts.length == 2) return parts.pop().split(";").shift();
         }
 
         function createTokenGenerator() {
-            console.log('createTokenGenerator');
+            console.log('createTokenGenerator() called');
             var hasBeenRunTimes = 0;
             return {
                 getToken: function() {
-                    console.log('getToken');
                     ++hasBeenRunTimes;
 
                     if (hasBeenRunTimes > 5) {
@@ -52,8 +51,7 @@
         }
 
         function setContext(context) {
-            console.log(context)
-            console.log('setContext called')
+            console.log('setContext() called')
             factory.getContext = context;
         }
     }

@@ -14,8 +14,7 @@
 
     function MainController($scope, utils, modelFactory, $rootScope, initialize) {
         var vm = this;
-
-        window.BUFFERSIZE = 8192;
+        var bufferSize = 8192;
 
         angular.element(document).ready(function() {
             var model = {
@@ -29,7 +28,7 @@
             var tokenGenerator = utils.createTokenGenerator();
 
             tokenGenerator.getToken().then(function(response) {
-                console.log('response', response);
+                console.log('getToken() called');
                 window.onbeforeunload = function() {
                     localStorage.clear();
                 };
@@ -46,7 +45,7 @@
                     currentModel: 'ja-JP_BroadbandModel',
                     models: model,
                     token: token,
-                    bufferSize: BUFFERSIZE
+                    bufferSize: bufferSize
                 };
 
                 utils.setContext(viewContext);

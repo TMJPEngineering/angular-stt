@@ -658,24 +658,24 @@ function updateDetectedKeywords() {
     });
 }
 
-function toggleAlternateWords() {
-    if (showAllHypotheses == false) {
-        if (vslider.min < 0) {
-            $('#vslider').css('display', 'block');
-        }
-        $('#show_alternate_words').text('Hide alternate words');
-        showAllHypotheses = true;
-    } else {
-        $('#vslider').css('display', 'none');
-        $('#show_alternate_words').text('Show alternate words');
-        showAllHypotheses = false;
-    }
-    draw();
-}
+// function toggleAlternateWords() {
+//     if (showAllHypotheses == false) {
+//         if (vslider.min < 0) {
+//             $('#vslider').css('display', 'block');
+//         }
+//         $('#show_alternate_words').text('Hide alternate words');
+//         showAllHypotheses = true;
+//     } else {
+//         $('#vslider').css('display', 'none');
+//         $('#show_alternate_words').text('Show alternate words');
+//         showAllHypotheses = false;
+//     }
+//     draw();
+// }
 
-$('#show_alternate_words').click(function( /*e*/ ) {
-    toggleAlternateWords();
-});
+// $('#show_alternate_words').click(function( /*e*/ ) {
+//     toggleAlternateWords();
+// });
 
 // exports.showJSON = function(baseJSON) {
 //     if ($('.nav-tabs .active').text() == 'JSON') {
