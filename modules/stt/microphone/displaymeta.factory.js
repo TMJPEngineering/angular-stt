@@ -69,6 +69,7 @@
                 showCNsKWS(data.bins);
                 popped++;
                 console.log('POPPED:', popped);
+                console.log('----------------');
             };
         }
 
