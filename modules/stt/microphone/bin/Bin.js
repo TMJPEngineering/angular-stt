@@ -1,14 +1,17 @@
-var Bin = (function(){
+var Bin = (function() {
     'use strict';
 
-    var fontSize = 16;
-    var delta_y = 2 * fontSize;
-    var showAllHypotheses = true;
-    var space = 4;
-    var ctx;
+    const RADIUS = 5;
+    const SPACE = 4;
+    const LINE_WIDTH = 2;
+    const FONT_SIZE = 16;
+    const DELTA_Y = 2 * FONT_SIZE;
 
-    var Bin = function(startTime, endTime, canvas) {
-        ctx = canvas;
+    var element = document.getElementById('canvas'),
+        canvas = element.getContext('2d'),
+        showAllHypotheses = true;
+
+    var Bin = function(startTime, endTime) {
         this._connectorWidth = 40;
         this._startTime = startTime;
         this._endTime = endTime;
@@ -18,14 +21,14 @@ var Bin = (function(){
         this._index = 0;
     };
 
-    Bin.prototype.addWordAlternative = function(wa) {
-        this._wordAlternatives.push(wa);
-        for (var index = 0; index < this._wordAlternatives.length; index++) {
-            var width = this._wordAlternatives[index].width();
+    Bin.prototype.addWordAlternative = function(wordAlternative) {
+        this._wordAlternatives.push(wordAlternative);
+        for (var counter = 0; counter < this._wordAlternatives.length; counter++) {
+            var width = this._wordAlternatives[counter].width();
             if (width > this._maxWordAlternativeWidth)
                 this._maxWordAlternativeWidth = width;
         }
-        this._height += wa.height();
+        this._height += wordAlternative.height();
     };
 
     Bin.prototype.height = function() {
@@ -36,22 +39,24 @@ var Bin = (function(){
         return this._maxWordAlternativeWidth + 2 * this._connectorWidth;
     };
 
-    Bin.prototype.draw = function(x, y) {
-        for (var index = 0; index < this._wordAlternatives.length; index++) {
-            var wa = this._wordAlternatives[index];
-            wa.draw(x + this._connectorWidth, y + delta_y * (index + 1), this._maxWordAlternativeWidth);
+    Bin.prototype.draw = function(offsetX, offsetY) {
+        for (var counter = 0; counter < this._wordAlternatives.length; counter++) {
+            var wordAlternative = this._wordAlternatives[counter];
+            wordAlternative.draw(offsetX + this._connectorWidth, offsetY + DELTA_Y * (counter + 1), this._maxWordAlternativeWidth);
             if (showAllHypotheses == false)
                 break;
         }
 
-        ctx.moveTo(x + space + radius, y + fontSize);
+        canvas.moveTo(offsetX + SPACE + RADIUS, offsetY + FONT_SIZE);
         if (this._wordAlternatives.length > 0) {
-            ctx.strokeStyle = '#4178BE';
-            ctx.lineWidth = 2;
-            ctx.lineTo(x + this.width() - (space + radius), y + fontSize);
-            ctx.stroke();
+            canvas.strokeStyle = '#4178BE';
+            canvas.lineWidth = LINE_WIDTH;
+            canvas.lineTo(offsetX + this.width() - (SPACE + RADIUS), offsetY + FONT_SIZE);
+            canvas.stroke();
         }
     };
 
     return Bin;
+
 })();
+

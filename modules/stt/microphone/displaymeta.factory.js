@@ -4,34 +4,46 @@
     angular
         .module('microphone')
         .factory('displaymetaFactory', displaymetaFactory);
-    displaymetaFactory.$inject = ['SceneFactory', 'BinFactory', 'WordAlternativeFactory', 'metadata', 'utils', '$timeout'];
+    displaymetaFactory.$inject = [
+        'SceneFactory',
+        'BinFactory',
+        'WordAlternativeFactory',
+        '$timeout'
+    ];
 
-    function displaymetaFactory(SceneFactory, BinFactory, WordAlternativeFactory,metadata, utils, $timeout) {
 
+    function displaymetaFactory(SceneFactory, BinFactory, WordAlternativeFactory, $timeout) {
+        var scene = new SceneFactory();
+        
         var factory = {
             showResults: showResults,
             initDisplayMetadata: initDisplayMetadata
         };
-        var INITIAL_OFFSET_Y = metadata.INITIAL_OFFSET_X;
-        var INITIAL_OFFSET_X = metadata.INITIAL_OFFSET_X;
-        var ctx = metadata.ctx;
-        var worker = metadata.worker;
-        var scrolled = metadata.scrolled;
-        var pushed = metadata.pushed;
-        var popped = metadata.popped;
-        var runTimer = metadata.runTimer;
-        var timeout = metadata.timeout;
-        var leftArrowEnabled = metadata.leftArrowEnabled;
-        var rightArrowEnabled = metadata.RightArrowEnabled;
 
-        var scene = new SceneFactory(ctx);
         // ctx.font = defaultFont;
+
+        const INITIAL_OFFSET_X = 30;
+        const INITIAL_OFFSET_Y = 30;
+        const timeout = 500;
+
+        var element = document.getElementById('canvas'),
+            canvas = element.getContext('2d'),
+            keywordsInputDirty = false,
+            worker = null,
+            leftArrowEnabled = false,
+            rightArrowEnabled = false,
+            runTimer = false,
+            scrolled = false,
+            pushed = 0,
+            popped = 0,
+            showAllHypotheses = true;
+
         return factory;
 
         function initDisplayMetadata() {
             console.log('initDisplayMetadata() called');
             // initTextScroll();
-            metadata.keywordsInputDirty = false;
+            keywordsInputDirty = false;
             hslider.min = 0;
             hslider.max = 0;
             hslider.value = hslider.min;
@@ -83,6 +95,39 @@
                 console.log('POPPED:', popped);
                 console.log('----------------');
             };
+        }
+
+        function showCNsKWS(bins, kws) {
+            bins.forEach(parseBin);
+            hslider.max = scene.width() - canvas.width + INITIAL_OFFSET_X;
+            hslider.value = hslider.max;
+            onHScroll();
+
+            if (vslider.min < 0 && showAllHypotheses) {
+                $('#vslider').css('display', 'block');
+            }
+            $('#hslider').css('display', 'block');
+            $('#show_alternate_words').css('display', 'inline-block');
+            $('#canvas').css('display', 'block');
+            $('#canvas-placeholder').css('display', 'none');
+            $('#left-arrow').css('display', 'inline-block');
+            $('#right-arrow').css('display', 'inline-block');
+        }
+
+        function parseAlternative(element /*, index, array*/ ) {
+            var confidence = element['confidence'];
+            var word = element['word'];
+            var bin = scene._bins[scene._bins.length - 1];
+            bin.addWordAlternative(new WordAlternative(word, confidence));
+        }
+
+        function parseBin(element /*, index, array*/ ) {
+            var start_time = element['start_time'];
+            var end_time = element['end_time'];
+            var alternatives = element['alternatives'];
+            var bin = new Bin(start_time, end_time);
+            scene.addBin(bin);
+            alternatives.forEach(parseAlternative);
         }
 
         function showResults(msg, baseString, model) {
@@ -187,63 +232,33 @@
 
         function onResize() {
             var dpr = window.devicePixelRatio || 1;
-            var bsr = ctx.webkitBackingStorePixelRatio ||
-                ctx.mozBackingStorePixelRatio ||
-                ctx.msBackingStorePixelRatio ||
-                ctx.oBackingStorePixelRatio ||
-                ctx.backingStorePixelRatio || 1;
+            var bsr = canvas.webkitBackingStorePixelRatio ||
+                canvas.mozBackingStorePixelRatio ||
+                canvas.msBackingStorePixelRatio ||
+                canvas.oBackingStorePixelRatio ||
+                canvas.backingStorePixelRatio || 1;
             var ratio = dpr / bsr;
             var w = $('#canvas').width();
             var h = $('#canvas').height();
             canvas.width = w * ratio;
             canvas.height = h * ratio;
-            ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+            canvas.setTransform(ratio, 0, 0, ratio, 0, 0);
             draw();
         }
 
-        function showCNsKWS(bins, kws) {
-            bins.forEach(parseBin);
-            hslider.max = scene.width() - canvas.width + INITIAL_OFFSET_X;
-            hslider.value = hslider.max;
-            onHScroll();
-
-            if (vslider.min < 0 && showAllHypotheses) {
-                $('#vslider').css('display', 'block');
+        function onTimer() {
+            worker.postMessage({
+                type: 'shift'
+            });
+            if (runTimer == true) {
+                setTimeout(onTimer, timeout);
             }
-            $('#hslider').css('display', 'block');
-            $('#show_alternate_words').css('display', 'inline-block');
-            $('#canvas').css('display', 'block');
-            $('#canvas-placeholder').css('display', 'none');
-            $('#left-arrow').css('display', 'inline-block');
-            $('#right-arrow').css('display', 'inline-block');
-
-            // KWS
-            // parseKeywords(kws);
-            // updateDetectedKeywords();
         }
-
-        function parseBin(element /*, index, array*/ ) {
-            var start_time = element['start_time'];
-            var end_time = element['end_time'];
-            var alternatives = element['alternatives'];
-            var bin = new Bin(start_time, end_time, ctx);
-            scene.addBin(bin);
-            alternatives.forEach(parseAlternative);
-        }
-
-        function parseAlternative(element /*, index, array*/ ) {
-            var confidence = element['confidence'];
-            var word = element['word'];
-            var bin = scene._bins[scene._bins.length - 1];
-            var WordAlt = new WordAlternative(word, confidence, ctx)
-            bin.addWordAlternative(WordAlt);
-        }
-
-
 
         function draw() {
-            ctx.clearRect(0, 0, 970, 370);
-            scene.draw(ctx);
+            canvas.clearRect(0, 0, 970, 370);
+            scene.draw();
+
         }
 
         function clearScene() {
@@ -267,7 +282,7 @@
 
             showAllHypotheses = true;
             $('#show_alternate_words').text('Hide alternate words');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.clearRect(0, 0, canvas.width, canvas.height);
         }
 
         function onTimer() {

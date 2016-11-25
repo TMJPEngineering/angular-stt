@@ -1,14 +1,15 @@
-var WordAlternative = (function(){
+var WordAlternative = (function() {
     'use strict';
 
-    var ctx;
-    var fontSize = 16;
-    var defaultFont = fontSize + 'px Arial';
-    // var ctx = canvas.getContext('2d');
-    var italicFont = 'italic ' + fontSize + 'px Arial';
-    // console.log('wordalt',text, confidence, ctx);
-    var WordAlternative = function(text, confidence, canvas) {
-        ctx = canvas;
+    const FONT_SIZE = 16;
+    const DEFAULT_FONT = FONT_SIZE + 'px Arial';
+    const BOLD_FONT = 'bold' + FONT_SIZE + 'px Arial';
+    const ITALIC_FONT = 'italic' + FONT_SIZE + 'px Arial';
+
+    var element = document.getElementById('canvas'),
+        canvas = element.getContext('2d');
+
+    var WordAlternative = function(text, confidence) {
         if (text == '<eps>') {
             this._text = '<silence>';
             this._foreColor = '#888';
@@ -20,10 +21,10 @@ var WordAlternative = (function(){
             this._text = text;
         }
         this._confidence = confidence;
-        this._height = 2 * fontSize;
-        // ctx.font = defaultFont;
-        // console.log(ctx);
-        this._width = ctx.measureText(this._text + ((this._confidence.toFixed(3) * 100).toFixed(1)) + '%').width + 60;
+        this._height = 2 * FONT_SIZE;
+        canvas.font = DEFAULT_FONT;
+        this._width = canvas.measureText(this._text + ((this._confidence.toFixed(3) * 100).toFixed(1)) + '%').width + 60;
+
         //FILL COLOR
         this._fillStyle = '#fff';
         this._selectedFillStyle = '#e3e3e3';
@@ -50,21 +51,23 @@ var WordAlternative = (function(){
         this._selected = false;
     };
 
-    WordAlternative.prototype.draw = function(x, y, width) {
-        ctx.fillStyle = this._selected ? this._selectedFillStyle : this._fillStyle;
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = '#26a69a';
-        ctx.fillRect(x, y, width, this.height());
-        ctx.strokeRect(x, y, width, this.height());
+    WordAlternative.prototype.draw = function(offsetX, offsetY, width) {
+        canvas.fillStyle = this._selected ? this._selectedFillStyle : this._fillStyle;
+        canvas.lineWidth = 1;
+        canvas.strokeStyle = '#26a69a';
+        canvas.fillRect(offsetX, offsetY, width, this.height());
+        canvas.strokeRect(offsetX, offsetY, width, this.height());
 
-        ctx.fillStyle = this._foreColor;
-        ctx.font = this._selected ? boldFont : defaultFont;
-        ctx.fillText(this._text, x + 16, y + 20);
-        ctx.font = italicFont;
+        canvas.fillStyle = this._foreColor;
+        canvas.font = this._selected ? BOLD_FONT : DEFAULT_FONT;
+        canvas.fillText(this._text, offsetX + 16, offsetY + 20);
+        canvas.font = ITALIC_FONT;
+
         const appendix = (this._confidence.toFixed(3) * 100).toFixed(1) + '%';
-        const rightOffset = ctx.measureText(appendix).width + 32;
-        ctx.fillText(appendix, x + 16 + width - rightOffset, y + 20);
-        ctx.font = defaultFont;
+        const rightOffset = canvas.measureText(appendix).width + 32;
+        
+        canvas.fillText(appendix, offsetX + 16 + width - rightOffset, offsetY + 20);
+        canvas.font = DEFAULT_FONT;
     };
 
     return WordAlternative;
