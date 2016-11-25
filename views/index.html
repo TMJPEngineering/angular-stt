@@ -10,7 +10,7 @@
   <div class="container">
     <h2>AngularJS: STT Application</h2>
     <div class="alert alert-info">
-      <button type="button" class="btn btn-default" aria-label="Stop" id="stopAudio">Stop</button>
+      <stop-record></stop-record>
       <record-audio></record-audio>
     </div>
     <div class="alert alert-info">
@@ -23,7 +23,7 @@
         <div id="canvas-placeholder">Alternative Words</div>
         <input id="vslider" type="range" orient="vertical">
       </div>
-      <input id="hslider" type="range" style="display:none;">
+      <input id="hslider" type="range">
     </div>
   </div>
   <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
@@ -37,6 +37,7 @@
   <script src="public/stt/views/views.module.js"></script>
   <script src="public/stt/views/views.factory.js"></script>
   <script src="public/stt/views/recordbutton.js"></script>
+  <script src="public/stt/views/stopbutton.js"></script>
   <script src="public/stt/views/displaymetadata.js"></script>
   <script src="public/stt/views/toast.js"></script>
   <script src="public/stt/views/show-error.js"></script>

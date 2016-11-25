@@ -3,7 +3,7 @@
 
     angular.module('word-alternative')
         .factory('WordAlternativeFactory', WordAlternativeFactory);
-    WordAlternativeFactory.$inject = ['metadataFactory'];
+    WordAlternativeFactory.$inject = [];
 
     function WordAlternativeFactory() {
         return WordAlternative;
