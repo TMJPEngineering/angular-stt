@@ -7,15 +7,20 @@
     displaymetaFactory.$inject = [
         'SceneFactory',
         'BinFactory',
-        'WordAlternativeFactory'
+        'WordAlternativeFactory',
+        '$timeout'
     ];
 
-    function displaymetaFactory(SceneFactory, BinFactory, WordAlternativeFactory) {
+
+    function displaymetaFactory(SceneFactory, BinFactory, WordAlternativeFactory, $timeout) {
         var scene = new SceneFactory();
+        
         var factory = {
             showResults: showResults,
             initDisplayMetadata: initDisplayMetadata
         };
+
+        // ctx.font = defaultFont;
 
         const INITIAL_OFFSET_X = 30;
         const INITIAL_OFFSET_Y = 30;
@@ -144,7 +149,7 @@
                     console.log('PUSHED:', pushed);
                     if (runTimer == false) {
                         runTimer = true;
-                        setTimeout(onTimer, timeout);
+                        $timeout(onTimer, timeout);
                     }
                 }
                 text = text.replace(/D_[^\s]+/g, '');
@@ -253,6 +258,7 @@
         function draw() {
             canvas.clearRect(0, 0, 970, 370);
             scene.draw();
+
         }
 
         function clearScene() {
@@ -279,6 +285,14 @@
             canvas.clearRect(0, 0, canvas.width, canvas.height);
         }
 
+        function onTimer() {
+            worker.postMessage({
+                type: 'shift'
+            });
+            if (runTimer == true) {
+                $timeout(onTimer, timeout);
+            }
+        }
         function resetWorker() {
             runTimer = false;
             worker.postMessage({

@@ -24,6 +24,7 @@ var WordAlternative = (function() {
         this._height = 2 * FONT_SIZE;
         canvas.font = DEFAULT_FONT;
         this._width = canvas.measureText(this._text + ((this._confidence.toFixed(3) * 100).toFixed(1)) + '%').width + 60;
+
         //FILL COLOR
         this._fillStyle = '#fff';
         this._selectedFillStyle = '#e3e3e3';

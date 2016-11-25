@@ -57,4 +57,6 @@ var Bin = (function() {
     };
 
     return Bin;
+
 })();
+

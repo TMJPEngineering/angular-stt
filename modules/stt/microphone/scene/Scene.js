@@ -132,4 +132,5 @@ var Scene = (function() {
     };
 
     return Scene;
+
 })();
