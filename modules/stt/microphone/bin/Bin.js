@@ -1,10 +1,15 @@
 var Bin = (function() {
     'use strict';
 
+    const RADIUS = 5;
+    const SPACE = 4;
     const LINE_WIDTH = 2;
+    const FONT_SIZE = 16;
+    const DELTA_Y = 2 * FONT_SIZE;
 
     var element = document.getElementById('canvas'),
-        canvas = element.getContext('2d');
+        canvas = element.getContext('2d'),
+        showAllHypotheses = true;
 
     var Bin = function(startTime, endTime) {
         this._connectorWidth = 40;
@@ -34,19 +39,19 @@ var Bin = (function() {
         return this._maxWordAlternativeWidth + 2 * this._connectorWidth;
     };
 
-    Bin.prototype.draw = function(x, y) {
+    Bin.prototype.draw = function(offsetX, offsetY) {
         for (var counter = 0; counter < this._wordAlternatives.length; counter++) {
             var wordAlternative = this._wordAlternatives[counter];
-            wordAlternative.draw(x + this._connectorWidth, y + delta_y * (counter + 1), this._maxWordAlternativeWidth);
+            wordAlternative.draw(offsetX + this._connectorWidth, offsetY + DELTA_Y * (counter + 1), this._maxWordAlternativeWidth);
             if (showAllHypotheses == false)
                 break;
         }
 
-        canvas.moveTo(x + space + radius, y + fontSize);
+        canvas.moveTo(offsetX + SPACE + RADIUS, offsetY + FONT_SIZE);
         if (this._wordAlternatives.length > 0) {
             canvas.strokeStyle = '#4178BE';
             canvas.lineWidth = LINE_WIDTH;
-            canvas.lineTo(x + this.width() - (space + radius), y + fontSize);
+            canvas.lineTo(offsetX + this.width() - (SPACE + RADIUS), offsetY + FONT_SIZE);
             canvas.stroke();
         }
     };
