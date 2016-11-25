@@ -1,6 +1,6 @@
 'use strict';
 
-var Scene = function() {
+var Scene = function(INITIAL_OFFSET_X, INITIAL_OFFSET_Y) {
     this._bins = [];
     this._offset_X = INITIAL_OFFSET_X;
     this._offset_Y = INITIAL_OFFSET_Y;

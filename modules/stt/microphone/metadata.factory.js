@@ -7,19 +7,20 @@
     metadata.$inject = [];
 
     function metadata() {
+        const INITIAL_OFFSET_X = 30;
+        const INITIAL_OFFSET_Y = 30;
+        const fontSize = 16;
+        const delta_y = 2 * fontSize;
+        const radius = 5;
+        const space = 4;
+        const hstep = 32;
+        const timeout = 500;
+        const defaultFont = fontSize + 'px Arial';
+        const boldFont = 'bold ' + fontSize + 'px Arial';
+        const italicFont = 'italic ' + fontSize + 'px Arial';
+        const opacity = '0.6';
+
         var factory = {
-            INITIAL_OFFSET_X:30,
-            INITIAL_OFFSET_Y:30,
-            fontSize:16,
-            delta_y:2 * fontSize,
-            radius:5,
-            space:4,
-            hstep:32,
-            timeout:500,
-            defaultFont:fontSize + 'px Arial',
-            boldFont:'bold ' + fontSize + 'px Arial',
-            italicFont:'italic ' + fontSize + 'px Arial',
-            opacity:'0.6',
 
             showAllHypotheses:true,
             keywordsInputDirty:false,

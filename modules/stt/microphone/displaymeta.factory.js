@@ -4,9 +4,9 @@
     angular
         .module('microphone')
         .factory('displaymetaFactory', displaymetaFactory);
-    displaymetaFactory.$inject = ['SceneFactory', 'BinFactory', 'WordAlternativeFactory'];
+    displaymetaFactory.$inject = ['SceneFactory', 'BinFactory', 'WordAlternativeFactory', 'metadata'];
 
-    function displaymetaFactory(SceneFactory, BinFactory, WordAlternativeFactory) {
+    function displaymetaFactory(SceneFactory, BinFactory, WordAlternativeFactory,metadata) {
         var scene = new SceneFactory();
         var factory = {
             showResults: showResults,
