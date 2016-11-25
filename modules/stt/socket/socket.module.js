@@ -1,5 +1,8 @@
 (function() {
     'use strict';
 
-    angular.module('socket', ['views']);
+    angular.module('socket', [
+        'utils',
+        'views'
+    ]);
 })();

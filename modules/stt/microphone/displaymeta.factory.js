@@ -1,50 +1,21 @@
-(function(){
+(function() {
     'use strict'
 
     angular
         .module('microphone')
         .factory('displaymetaFactory', displaymetaFactory);
-    displaymetaFactory.$inject = [];
+    displaymetaFactory.$inject = ['SceneFactory'];
 
-    function displaymetaFactory() {
+    function displaymetaFactory(SceneFactory) {
         var factory = {
             showResults: showResults,
-            initDisplayMetadata: initDisplayMetadata,
-            worker: null
-        }
-        const INITIAL_OFFSET_X = 30;
-        const INITIAL_OFFSET_Y = 30;
-        const fontSize = 16;
-        const delta_y = 2 * fontSize;
-        const radius = 5;
-        const space = 4;
-        const hstep = 32;
-        const timeout = 500;
-        const defaultFont = fontSize + 'px Arial';
-        const boldFont = 'bold ' + fontSize + 'px Arial';
-        const italicFont = 'italic ' + fontSize + 'px Arial';
-        const opacity = '0.6';
+            initDisplayMetadata: initDisplayMetadata
+        };
 
-        var showAllHypotheses = true;
-        var keywordsInputDirty = false;
-        var keywords_to_search = [];
-        var detected_keywords = {};
-        var canvas = document.getElementById('canvas');
-        var ctx = canvas.getContext('2d');
-        var hslider = document.getElementById('hslider');
-        var vslider = document.getElementById('vslider');
-        var leftArrowEnabled = false;
-        var rightArrowEnabled = false;
-        // var worker = null;
-        var runTimer = false;
-        var scrolled = false;
-        // var textScrolled = false;
-        var pushed = 0;
-        var popped = 0;
-
-        return factory
+        return factory;
 
         function initDisplayMetadata() {
+            console.log('intiDisplayMetadata() called');
             // initTextScroll();
             keywordsInputDirty = false;
             hslider.min = 0;
@@ -91,14 +62,15 @@
 
             var blobURL = window.URL.createObjectURL(new Blob([workerScriptBody]));
             console.log("BLOB URL", blobURL);
-            factory.worker = new Worker(blobURL);
-            factory.worker.onmessage = function(event) {
+            worker = new Worker(blobURL);
+            worker.onmessage = function(event) {
                 var data = event.data;
                 // eslint-disable-next-line no-use-before-define
                 // showCNsKWS(data.bins, data.kws);
                 popped++;
                 console.log('----> popped', popped);
             };
+            console.log('worker instantiate');
         }
 
         function showResults(msg, baseString, model) {
@@ -112,7 +84,7 @@
 
                 if (msg.results[0].final) {
                     console.log('-> ' + text);
-                    factory.worker.postMessage({
+                    worker.postMessage({
                         type: 'push',
                         msg: msg
                     });
@@ -154,7 +126,7 @@
                     }
                     result = baseString + text;
                 }
-                
+
                 $('#resultsText').val(result);
                 localStorage.setItem('result', result);
             }
@@ -249,7 +221,7 @@
 
         function resetWorker() {
             runTimer = false;
-            factory.worker.postMessage({
+            worker.postMessage({
                 type: 'clear'
             });
             pushed = 0;

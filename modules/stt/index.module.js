@@ -10,7 +10,7 @@
             'toast'
         ])
         .controller('MainController', MainController);
-    MainController.$inject = ['$scope', 'utils', 'modelFactory', '$rootScope','initialize'];
+    MainController.$inject = ['$scope', 'utils', 'modelFactory', '$rootScope', 'initialize'];
 
     function MainController($scope, utils, modelFactory, $rootScope, initialize) {
         var vm = this;
