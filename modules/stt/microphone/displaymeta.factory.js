@@ -21,16 +21,17 @@
         const INITIAL_OFFSET_Y = 30;
         const timeout = 500;
 
-        var keywordsInputDirty = false;
         var element = document.getElementById('canvas'),
-            canvas = element.getContext('2d');
-        var worker = null;
-        var leftArrowEnabled = false;
-        var rightArrowEnabled = false;
-        var runTimer = false;
-        var scrolled = false;
-        var pushed = 0;
-        var popped = 0;
+            canvas = element.getContext('2d'),
+            keywordsInputDirty = false,
+            worker = null,
+            leftArrowEnabled = false,
+            rightArrowEnabled = false,
+            runTimer = false,
+            scrolled = false,
+            pushed = 0,
+            popped = 0,
+            showAllHypotheses = true;
 
         return factory;
 
