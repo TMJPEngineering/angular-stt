@@ -3,6 +3,7 @@
 
     angular.module('views', [
         'utils',
-        'microphone'
+        'microphone',
+        'toast'
     ]);
 })();

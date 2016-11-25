@@ -3,9 +3,9 @@
 
     angular.module('socket')
         .factory('socketFactory', socketFactory);
-    socketFactory.$inject = ['$rootScope', 'utils'];
+    socketFactory.$inject = ['$rootScope', 'notification', 'utils'];
 
-    function socketFactory($rootScope, utils) {
+    function socketFactory($rootScope, notification, utils) {
         var factory = {
             connect: connect,
             initSocket: initSocket
@@ -14,19 +14,12 @@
         return factory;
 
         function connect(token, model) {
-            var socket;
-            console.log('Socket Factory (token):', token);
-            console.log('Socket Factory (model):', model);
-
             try {
-                socket = new WebSocket('wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?watson-token=' + token + '&model=' + model);
+                return new WebSocket('wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?watson-token=' + token + '&model=' + model);
             } catch (error) {
-                console.error('WS connection error:', error);
+                notification.showError('WS connection error: ' + error);
+                return;
             }
-
-            console.log('SOCKET:', socket);
-
-            return socket;
         }
 
         function initSocket(options, onOpen, onListening, onMessage, onError, onClose) {
@@ -40,7 +33,6 @@
             socket.onopen = function() {
                 listening = false;
 
-                // TODO: Convert to Angular Event
                 $rootScope.$on('hardsocketstop', function() {
                     console.log('MICROPHONE: close.');
                     socket.send(JSON.stringify({ action: 'stop' }));
@@ -58,9 +50,7 @@
             socket.onmessage = function(event) {
                 var message = JSON.parse(event.data)
                 if (message.error) {
-                    // TODO: Change to toast
-                    showError(message.error);
-                    // TODO: Change to Angular Event
+                    notification.showError(message.error);
                     $rootScope.$emit('hardsocketstop');
                     return;
                 }
@@ -80,9 +70,7 @@
 
             socket.onerror = function(event) {
                 console.log('WS onerror:', event);
-                // TODO: Change to toast
-                showError('Application error ' + event.code + ': please refresh your browser and try again');
-                // TODO: Change to Angular Event
+                notification.showError('Application error ' + event.code + ': please refresh your browser and try again');
                 $rootScope.$emit('clearscreen');
                 onError(event);
             };
@@ -91,7 +79,7 @@
                 console.log('WS onclose:', event);
                 if (event.code === 1006) {
                     // Authentication error, try to reconnect
-                    console.log('generator count', tokenGenerator.getCount());
+                    console.log('generator count', utils);
                     if (tokenGenerator.getCount() > 1) {
                         // TODO: Change to Angular Event
                         $rootScope.$emit('hardsocketstop');
@@ -127,7 +115,7 @@
                 // $.unsubscribe('socketstop');
 
                 onClose(event);
-            }
+            };
         }
     }
 })();

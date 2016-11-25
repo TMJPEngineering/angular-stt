@@ -6,7 +6,8 @@
             'views',
             'microphone',
             'socket',
-            'models'
+            'models',
+            'toast'
         ])
         .controller('MainController', MainController);
     MainController.$inject = ['$scope', 'utils', 'modelFactory', '$rootScope', 'initialize'];
@@ -48,7 +49,7 @@
                     bufferSize: BUFFERSIZE
                 };
 
-                // utils.setContext(viewContext);
+                utils.setContext(viewContext);
                 initialize.initViews(viewContext);
 
                 // Save model to localstorage
