@@ -4,9 +4,10 @@
     angular
         .module('microphone')
         .factory('displaymetaFactory', displaymetaFactory);
-    displaymetaFactory.$inject = ['SceneFactory'];
+    displaymetaFactory.$inject = ['SceneFactory', 'BinFactory', 'WordAlternativeFactory'];
 
-    function displaymetaFactory(SceneFactory) {
+    function displaymetaFactory(SceneFactory, BinFactory, WordAlternativeFactory) {
+        var scene = new SceneFactory();
         var factory = {
             showResults: showResults,
             initDisplayMetadata: initDisplayMetadata
@@ -66,7 +67,7 @@
             worker.onmessage = function(event) {
                 var data = event.data;
                 // eslint-disable-next-line no-use-before-define
-                // showCNsKWS(data.bins, data.kws);
+                showCNsKWS(data.bins, data.kws);
                 popped++;
                 console.log('----> popped', popped);
             };
@@ -173,22 +174,59 @@
             draw();
         }
 
-        function onResize() {
-            var dpr = window.devicePixelRatio || 1;
-            var bsr = ctx.webkitBackingStorePixelRatio ||
-                ctx.mozBackingStorePixelRatio ||
-                ctx.msBackingStorePixelRatio ||
-                ctx.oBackingStorePixelRatio ||
-                ctx.backingStorePixelRatio || 1;
-            var ratio = dpr / bsr;
-            console.log('dpr/bsr =', ratio);
-            var w = $('#canvas').width();
-            var h = $('#canvas').height();
-            canvas.width = w * ratio;
-            canvas.height = h * ratio;
-            ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-            draw();
-        }
+        // function showCNsKWS(bins, kws) {
+        //     bins.forEach(parseBin);
+        //     hslider.max = scene.width() - canvas.width + INITIAL_OFFSET_X;
+        //     hslider.value = hslider.max;
+        //     onHScroll();
+
+        //     if (vslider.min < 0 && showAllHypotheses) {
+        //         $('#vslider').css('display', 'block');
+        //     }
+        //     $('#hslider').css('display', 'block');
+        //     $('#show_alternate_words').css('display', 'inline-block');
+        //     $('#canvas').css('display', 'block');
+        //     $('#canvas-placeholder').css('display', 'none');
+        //     $('#left-arrow').css('display', 'inline-block');
+        //     $('#right-arrow').css('display', 'inline-block');
+
+        //     // KWS
+        //     // parseKeywords(kws);
+        //     // updateDetectedKeywords();
+        // }
+
+        // function parseAlternative(element /*, index, array*/ ) {
+        //     var confidence = element['confidence'];
+        //     var word = element['word'];
+        //     var bin = scene._bins[scene._bins.length - 1];
+        //     bin.addWordAlternative(new WordAlternativeFactory(word, confidence));
+        // }
+
+        // function parseBin(element /*, index, array*/ ) {
+        //     var start_time = element['start_time'];
+        //     var end_time = element['end_time'];
+        //     var alternatives = element['alternatives'];
+        //     var bin = new BinFactory(start_time, end_time);
+        //     scene.addBin(bin);
+        //     alternatives.forEach(parseAlternative);
+        // }
+
+        // function onResize() {
+        //     var dpr = window.devicePixelRatio || 1;
+        //     var bsr = ctx.webkitBackingStorePixelRatio ||
+        //         ctx.mozBackingStorePixelRatio ||
+        //         ctx.msBackingStorePixelRatio ||
+        //         ctx.oBackingStorePixelRatio ||
+        //         ctx.backingStorePixelRatio || 1;
+        //     var ratio = dpr / bsr;
+        //     console.log('dpr/bsr =', ratio);
+        //     var w = $('#canvas').width();
+        //     var h = $('#canvas').height();
+        //     canvas.width = w * ratio;
+        //     canvas.height = h * ratio;
+        //     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        //     draw();
+        // }
 
         function draw() {
             ctx.clearRect(0, 0, 970, 370);
