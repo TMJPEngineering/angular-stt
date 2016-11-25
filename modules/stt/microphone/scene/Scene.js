@@ -1,123 +1,135 @@
-'use strict';
+var Scene = (function() {
+    'use strict';
 
-var Scene = function() {
-    this._bins = [];
-    this._offset_X = INITIAL_OFFSET_X;
-    this._offset_Y = INITIAL_OFFSET_Y;
-    this._width = 0;
-    this._height = 0;
-    this._shift = 100;
-};
+    const INITIAL_OFFSET_X = 30;
+    const INITIAL_OFFSET_Y = 30;
+    const FONT_SIZE = 16;
+    const RADIUS = 5;
+    const SPACE = 4;
+    const LINE_WIDTH = 2;
 
-Scene.prototype.draw = function() {
-    var x = this._offset_X;
-    var y = this._offset_Y;
-    var last_bin_end_time = 0;
+    var element = document.getElementById('canvas'),
+        vslider = document.getElementById('vslider'),
+        canvas = element.getContext('2d');
 
-    for (var index = 0; index < this._bins.length; index++) {
-        var bin = this._bins[index];
-        var x_visible = Math.abs(x) <= canvas.width;
-        ctx.beginPath();
+    var Scene = function() {
+        this._bins = [];
+        this._offsetX = INITIAL_OFFSET_X;
+        this._offsetY = INITIAL_OFFSET_Y;
+        this._width = 0;
+        this._height = 0;
+        this._shift = 100;
+    };
 
-        if (bin._startTime > last_bin_end_time) {
-            if (x_visible) {
-                ctx.moveTo(x + radius + space, y + fontSize);
-            }
-            if (last_bin_end_time > 0) {
-                x += this._shift;
-                if (x_visible) {
-                    ctx.strokeStyle = '#4178BE';
-                    ctx.lineWidth = 2;
-                    ctx.lineTo(x - (radius + space), y + fontSize);
-                    ctx.stroke();
+    Scene.prototype.draw = function() {
+        var offsetX = this._offsetX;
+        var offsetY = this._offsetY;
+        var lastBinEndTime = 0;
+
+        for (var counter = 0; counter < this._bins.length; counter++) {
+            var bin = this._bins[counter];
+            var xVisible = Math.abs(offsetX) <= element.width;
+            canvas.beginPath();
+
+            if (bin._startTime > lastBinEndTime) {
+                if (xVisible) {
+                    canvas.moveTo(offsetX + RADIUS + SPACE, offsetY + FONT_SIZE);
+                }
+                if (lastBinEndTime > 0) {
+                    offsetX += this._shift;
+                    if (xVisible) {
+                        canvas.strokeStyle = '#4178BE';
+                        canvas.lineWidth = LINE_WIDTH;
+                        canvas.lineTo(offsetX - (RADIUS + SPACE), offsetY + FONT_SIZE);
+                        canvas.stroke();
+                    }
+                }
+                if (xVisible) {
+                    canvas.moveTo(offsetX + RADIUS, offsetY + FONT_SIZE);
+                    canvas.lineWidth = LINE_WIDTH;
+                    canvas.arc(offsetX, offsetY + FONT_SIZE, RADIUS, 0, 2 * Math.PI, false);
+                    var startTimeCaption = bin._startTime + ' s';
+                    var startTimeShift = canvas.measureText(startTimeCaption).width / 2;
+                    canvas.fillText(startTimeCaption, offsetX - startTimeShift, offsetY);
+                    canvas.stroke();
                 }
             }
-            if (x_visible) {
-                ctx.moveTo(x + radius, y + fontSize);
-                ctx.lineWidth = 2;
-                ctx.arc(x, y + fontSize, radius, 0, 2 * Math.PI, false);
-                var start_time_caption = bin._startTime + ' s';
-                var start_time_shift = ctx.measureText(start_time_caption).width / 2;
-                ctx.fillText(start_time_caption, x - start_time_shift, y);
-                ctx.stroke();
+
+            if (xVisible) {
+                bin.draw(offsetX, offsetY);
+                canvas.moveTo(offsetX + bin.width() + RADIUS, offsetY + FONT_SIZE);
+                canvas.strokeStyle = '#ee6e73';
+                canvas.lineWidth = LINE_WIDTH;
+                canvas.arc(offsetX + bin.width(), offsetY + FONT_SIZE, RADIUS, 0, 2 * Math.PI, false);
+                canvas.stroke();
+                var endTimeCaption = bin._endTime + ' s';
+                var endTimeShift = canvas.measureText(endTimeCaption).width / 2;
+                canvas.fillText(endTimeCaption, offsetX + bin.width() - endTimeShift, offsetY);
+                canvas.stroke();
+            }
+
+            lastBinEndTime = bin._endTime;
+            offsetX += bin.width();
+            canvas.closePath();
+        }
+    };
+
+    Scene.prototype.addBin = function(bin) {
+        bin._index = this._bins.length;
+        this._bins.push(bin);
+        var width = 2 * INITIAL_OFFSET_X;
+        var lastBinEndTime = 0;
+        for (var index = 0; index < this._bins.length; index++) {
+            var bin = this._bins[index];
+            if (bin._startTime > lastBinEndTime && lastBinEndTime > 0) {
+                width += this._shift;
+            }
+            lastBinEndTime = bin._endTime;
+            width += bin.width();
+            if (this._height < bin.height()) {
+                this._height = bin.height();
+                vslider.min = element.height - this._height - 2.5 * INITIAL_OFFSET_Y;
             }
         }
+        this._width = width;
+    };
 
-        if (x_visible) {
-            bin.draw(x, y);
-            ctx.moveTo(x + bin.width() + radius, y + fontSize);
-            //TIME RECORDER COLOR
-            ctx.strokeStyle = '#ee6e73';
-            ctx.lineWidth = 2;
-            ctx.arc(x + bin.width(), y + fontSize, radius, 0, 2 * Math.PI, false);
-            ctx.stroke();
-            var end_time_caption = bin._endTime + ' s';
-            var end_time_shift = ctx.measureText(end_time_caption).width / 2;
-            ctx.fillText(end_time_caption, x + bin.width() - end_time_shift, y);
-            ctx.stroke();
-        }
+    Scene.prototype.width = function() {
+        return this._width + 2 * this._shift;
+    };
 
-        last_bin_end_time = bin._endTime;
-        x += bin.width();
-        ctx.closePath();
-    }
-};
+    Scene.prototype.height = function() {
+        return this._height;
+    };
 
-Scene.prototype.addBin = function(bin) {
-    bin._index = this._bins.length;
-    this._bins.push(bin);
-    var width = 2 * INITIAL_OFFSET_X;
-    var last_bin_end_time = 0;
-    for (var index = 0; index < this._bins.length; index++) {
-        // eslint-disable-next-line no-redeclare
-        var bin = this._bins[index];
-        if (bin._startTime > last_bin_end_time && last_bin_end_time > 0) {
-            width += this._shift;
-        }
-        last_bin_end_time = bin._endTime;
-        width += bin.width();
-        if (this._height < bin.height()) {
-            this._height = bin.height();
-            vslider.min = canvas.height - this._height - 2.5 * INITIAL_OFFSET_Y;
-        }
-    }
-    this._width = width;
-};
-
-Scene.prototype.width = function() {
-    return this._width + 2 * this._shift;
-};
-
-Scene.prototype.height = function() {
-    return this._height;
-};
-
-Scene.prototype.findBins = function(start_time, end_time) {
-    var foundBins = [];
-    for (var index = 0; index < this._bins.length; index++) {
-        var bin = this._bins[index];
-        var binStartTime = bin._startTime;
-        var binEndTime = bin._endTime;
-        if (binStartTime >= start_time && binEndTime <= end_time) {
-            foundBins.push(bin);
-        }
-    }
-    return foundBins;
-};
-
-Scene.prototype.startTimeToSliderValue = function(start_time) {
-    var last_bin_end_time = 0;
-    var value = 0;
-    for (var binIndex = 0; binIndex < this._bins.length; binIndex++) {
-        var bin = this._bins[binIndex];
-        if (bin._startTime < start_time) {
-            value += bin.width();
-            if (bin._startTime > last_bin_end_time && last_bin_end_time > 0) {
-                // eslint-disable-next-line no-use-before-define
-                value += scene._shift;
+    Scene.prototype.findBins = function(start_time, end_time) {
+        var foundBins = [];
+        for (var index = 0; index < this._bins.length; index++) {
+            var bin = this._bins[index];
+            var binStartTime = bin._startTime;
+            var binEndTime = bin._endTime;
+            if (binStartTime >= start_time && binEndTime <= end_time) {
+                foundBins.push(bin);
             }
-            last_bin_end_time = bin._endTime;
         }
-    }
-    return value;
-};
+        return foundBins;
+    };
+
+    Scene.prototype.startTimeToSliderValue = function(start_time) {
+        var lastBinEndTime = 0;
+        var value = 0;
+        for (var binIndex = 0; binIndex < this._bins.length; binIndex++) {
+            var bin = this._bins[binIndex];
+            if (bin._startTime < start_time) {
+                value += bin.width();
+                if (bin._startTime > lastBinEndTime && lastBinEndTime > 0) {
+                    value += scene._shift;
+                }
+                lastBinEndTime = bin._endTime;
+            }
+        }
+        return value;
+    };
+
+    return Scene;
+})();

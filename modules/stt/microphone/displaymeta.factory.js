@@ -4,7 +4,11 @@
     angular
         .module('microphone')
         .factory('displaymetaFactory', displaymetaFactory);
-    displaymetaFactory.$inject = ['SceneFactory', 'BinFactory', 'WordAlternativeFactory'];
+    displaymetaFactory.$inject = [
+        'SceneFactory',
+        'BinFactory',
+        'WordAlternativeFactory'
+    ];
 
     function displaymetaFactory(SceneFactory, BinFactory, WordAlternativeFactory) {
         var scene = new SceneFactory();
@@ -13,7 +17,21 @@
             initDisplayMetadata: initDisplayMetadata
         };
 
-        // ctx.font = defaultFont;
+        const INITIAL_OFFSET_X = 30;
+        const INITIAL_OFFSET_Y = 30;
+        const timeout = 500;
+
+        var keywordsInputDirty = false;
+        var element = document.getElementById('canvas'),
+            canvas = element.getContext('2d');
+        var worker = null;
+        var leftArrowEnabled = false;
+        var rightArrowEnabled = false;
+        var runTimer = false;
+        var scrolled = false;
+        var pushed = 0;
+        var popped = 0;
+
         return factory;
 
         function initDisplayMetadata() {
@@ -71,6 +89,39 @@
                 console.log('POPPED:', popped);
                 console.log('----------------');
             };
+        }
+
+        function showCNsKWS(bins, kws) {
+            bins.forEach(parseBin);
+            hslider.max = scene.width() - canvas.width + INITIAL_OFFSET_X;
+            hslider.value = hslider.max;
+            onHScroll();
+
+            if (vslider.min < 0 && showAllHypotheses) {
+                $('#vslider').css('display', 'block');
+            }
+            $('#hslider').css('display', 'block');
+            $('#show_alternate_words').css('display', 'inline-block');
+            $('#canvas').css('display', 'block');
+            $('#canvas-placeholder').css('display', 'none');
+            $('#left-arrow').css('display', 'inline-block');
+            $('#right-arrow').css('display', 'inline-block');
+        }
+
+        function parseAlternative(element /*, index, array*/ ) {
+            var confidence = element['confidence'];
+            var word = element['word'];
+            var bin = scene._bins[scene._bins.length - 1];
+            bin.addWordAlternative(new WordAlternative(word, confidence));
+        }
+
+        function parseBin(element /*, index, array*/ ) {
+            var start_time = element['start_time'];
+            var end_time = element['end_time'];
+            var alternatives = element['alternatives'];
+            var bin = new Bin(start_time, end_time);
+            scene.addBin(bin);
+            alternatives.forEach(parseAlternative);
         }
 
         function showResults(msg, baseString, model) {
@@ -175,22 +226,31 @@
 
         function onResize() {
             var dpr = window.devicePixelRatio || 1;
-            var bsr = ctx.webkitBackingStorePixelRatio ||
-                ctx.mozBackingStorePixelRatio ||
-                ctx.msBackingStorePixelRatio ||
-                ctx.oBackingStorePixelRatio ||
-                ctx.backingStorePixelRatio || 1;
+            var bsr = canvas.webkitBackingStorePixelRatio ||
+                canvas.mozBackingStorePixelRatio ||
+                canvas.msBackingStorePixelRatio ||
+                canvas.oBackingStorePixelRatio ||
+                canvas.backingStorePixelRatio || 1;
             var ratio = dpr / bsr;
             var w = $('#canvas').width();
             var h = $('#canvas').height();
             canvas.width = w * ratio;
             canvas.height = h * ratio;
-            ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+            canvas.setTransform(ratio, 0, 0, ratio, 0, 0);
             draw();
         }
 
+        function onTimer() {
+            worker.postMessage({
+                type: 'shift'
+            });
+            if (runTimer == true) {
+                setTimeout(onTimer, timeout);
+            }
+        }
+
         function draw() {
-            ctx.clearRect(0, 0, 970, 370);
+            canvas.clearRect(0, 0, 970, 370);
             scene.draw();
         }
 
@@ -215,7 +275,7 @@
 
             showAllHypotheses = true;
             $('#show_alternate_words').text('Hide alternate words');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.clearRect(0, 0, canvas.width, canvas.height);
         }
 
         function resetWorker() {
