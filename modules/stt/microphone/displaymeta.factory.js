@@ -4,22 +4,34 @@
     angular
         .module('microphone')
         .factory('displaymetaFactory', displaymetaFactory);
-    displaymetaFactory.$inject = ['SceneFactory', 'BinFactory', 'WordAlternativeFactory', 'metadata'];
+    displaymetaFactory.$inject = ['SceneFactory', 'BinFactory', 'WordAlternativeFactory', 'metadata', 'utils', '$timeout'];
 
-    function displaymetaFactory(SceneFactory, BinFactory, WordAlternativeFactory,metadata) {
-        var scene = new SceneFactory();
+    function displaymetaFactory(SceneFactory, BinFactory, WordAlternativeFactory,metadata, utils, $timeout) {
+
         var factory = {
             showResults: showResults,
             initDisplayMetadata: initDisplayMetadata
         };
+        var INITIAL_OFFSET_Y = metadata.INITIAL_OFFSET_X;
+        var INITIAL_OFFSET_X = metadata.INITIAL_OFFSET_X;
+        var ctx = metadata.ctx;
+        var worker = metadata.worker;
+        var scrolled = metadata.scrolled;
+        var pushed = metadata.pushed;
+        var popped = metadata.popped;
+        var runTimer = metadata.runTimer;
+        var timeout = metadata.timeout;
+        var leftArrowEnabled = metadata.leftArrowEnabled;
+        var rightArrowEnabled = metadata.RightArrowEnabled;
 
+        var scene = new SceneFactory(ctx);
         // ctx.font = defaultFont;
         return factory;
 
         function initDisplayMetadata() {
             console.log('initDisplayMetadata() called');
             // initTextScroll();
-            keywordsInputDirty = false;
+            metadata.keywordsInputDirty = false;
             hslider.min = 0;
             hslider.max = 0;
             hslider.value = hslider.min;
@@ -92,7 +104,7 @@
                     console.log('PUSHED:', pushed);
                     if (runTimer == false) {
                         runTimer = true;
-                        setTimeout(onTimer, timeout);
+                        $timeout(onTimer, timeout);
                     }
                 }
                 text = text.replace(/D_[^\s]+/g, '');
@@ -189,9 +201,49 @@
             draw();
         }
 
+        function showCNsKWS(bins, kws) {
+            bins.forEach(parseBin);
+            hslider.max = scene.width() - canvas.width + INITIAL_OFFSET_X;
+            hslider.value = hslider.max;
+            onHScroll();
+
+            if (vslider.min < 0 && showAllHypotheses) {
+                $('#vslider').css('display', 'block');
+            }
+            $('#hslider').css('display', 'block');
+            $('#show_alternate_words').css('display', 'inline-block');
+            $('#canvas').css('display', 'block');
+            $('#canvas-placeholder').css('display', 'none');
+            $('#left-arrow').css('display', 'inline-block');
+            $('#right-arrow').css('display', 'inline-block');
+
+            // KWS
+            // parseKeywords(kws);
+            // updateDetectedKeywords();
+        }
+
+        function parseBin(element /*, index, array*/ ) {
+            var start_time = element['start_time'];
+            var end_time = element['end_time'];
+            var alternatives = element['alternatives'];
+            var bin = new Bin(start_time, end_time, ctx);
+            scene.addBin(bin);
+            alternatives.forEach(parseAlternative);
+        }
+
+        function parseAlternative(element /*, index, array*/ ) {
+            var confidence = element['confidence'];
+            var word = element['word'];
+            var bin = scene._bins[scene._bins.length - 1];
+            var WordAlt = new WordAlternative(word, confidence, ctx)
+            bin.addWordAlternative(WordAlt);
+        }
+
+
+
         function draw() {
             ctx.clearRect(0, 0, 970, 370);
-            scene.draw();
+            scene.draw(ctx);
         }
 
         function clearScene() {
@@ -218,6 +270,14 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
 
+        function onTimer() {
+            worker.postMessage({
+                type: 'shift'
+            });
+            if (runTimer == true) {
+                $timeout(onTimer, timeout);
+            }
+        }
         function resetWorker() {
             runTimer = false;
             worker.postMessage({

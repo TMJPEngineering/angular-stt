@@ -14,7 +14,7 @@
         const radius = 5;
         const space = 4;
         const hstep = 32;
-        const timeout = 500;
+        // const timeout = 500;
         const defaultFont = fontSize + 'px Arial';
         const boldFont = 'bold ' + fontSize + 'px Arial';
         const italicFont = 'italic ' + fontSize + 'px Arial';
@@ -35,9 +35,12 @@
             worker:null,
             runTimer:false,
             scrolled:false,
+            timeout: 500,
+            INITIAL_OFFSET_X: 30,
+            INITIAL_OFFSET_Y: 30,
             // var textScrolled = false;
             pushed:0,
-            poppep: 0
+            popped: 0
 
             // ctx.font: defaultFont;
         }
