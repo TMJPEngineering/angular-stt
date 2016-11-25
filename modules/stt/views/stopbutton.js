@@ -15,15 +15,13 @@
         return directive;
 
         function linkFn(scope, element, attr) {
-            var micOptions = {
-                bufferSize: ctx.buffersize
-            };
-            var mic = new Microphone(micOptions);
-
             element.on('click', function() {
-                console.log('Stopping microphone, sending stop action message');
+                console.log('Stopping microphone');
+                var microphone = new MicrophoneFactory({
+                    bufferSize: utils.getContext.bufferSize
+                });
                 $rootScope.$emit('hardsocketstop');
-                mic.stop();
+                microphone.stop();
                 localStorage.setItem('currentlyDisplaying', 'false');
             });
         }
