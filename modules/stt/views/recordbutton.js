@@ -9,9 +9,9 @@
     angular
         .module('views')
         .directive('recordAudio', recordAudio);
-    recordAudio.$inject = ['utils', 'MicrophoneFactory', 'microphoneHandler'];
+    recordAudio.$inject = ['utils', 'MicrophoneFactory', 'microphoneHandler', 'notification'];
 
-    function recordAudio(utils, MicrophoneFactory, microphoneHandler) {
+    function recordAudio(utils, MicrophoneFactory, microphoneHandler, notification) {
         var directive = {
             restrict: 'E',
             template: '<button type="button" class="btn btn-default" aria-label="Play" id="recordAudio">Play</button>',
@@ -21,54 +21,36 @@
         return directive;
 
         function linkFn(scope, element, attr) {
-            element.on('click', function(evt) {
-                evt.preventDefault();
-                var running = false;
+            element.on('click', function(event) {
+                event.preventDefault();
                 var token = utils.getContext.token;
-                var micOptions = {
+                var config = {
                     bufferSize: utils.getContext.bufferSize
                 };
 
-                var mic = new MicrophoneFactory(micOptions);
+                var microphone = new MicrophoneFactory(config);
                 var currentModel = localStorage.getItem('currentModel');
                 var currentlyDisplaying = localStorage.getItem('currentlyDisplaying');
 
                 if (currentlyDisplaying == 'sample' || currentlyDisplaying == 'fileupload') {
-                    showError('Currently another file is playing, please stop the file or wait until it finishes');
+                    notification.showError('Currently another file is playing, please stop the file or wait until it finishes');
                     return;
                 }
 
-                localStorage.setItem('currentlyDisplaying', 'record');
-                if (!running) {
-                    $('#resultsText').val(''); // clear hypotheses from previous runs
-                    console.log('Not running, handleMicrophone()');
-                    console.log(token, currentModel);
-                    microphoneHandler.handleMicrophone(token, currentModel, mic, function(err) {
-                            if (err) {
-                                var msg = 'Error: ' + err.message;
-                                console.log(msg);
-                                showError(msg);
-                                running = false;
-                                localStorage.setItem('currentlyDisplaying', 'false');
-                                console.log('Running = false');
-                            } else {
-                                element.css('background-color', '#d74108');
-                                element.find('img').attr('src', 'images/stop.svg');
-                                console.log('starting mic');
-                                mic.record();
-                                running = true;
-                                console.log('Running = trues')
-                            }
-                    });
-                } else {
-                    console.log('Stopping microphone, sending stop action message');
-                    element.removeAttr('style');
-                    element.find('img').attr('src', 'images/microphone.svg');
-                    $rootScope.emit('hardsocketstop');
-                    mic.stop();
-                    running = false;
-                    localStorage.setItem('currentlyDisplaying', 'false');
-                }
+                $('#resultsText').val(''); // clear hypotheses from previous runs
+                microphoneHandler.handleMicrophone(token, currentModel, microphone, function(error) {
+                    if (error) {
+                        console.log('handleMicrophone(): not running');
+                        notification.showError('Error: ' + error.message);
+                        localStorage.setItem('currentlyDisplaying', 'false');
+                    } else {
+                        console.log('handleMicrophone(): running');
+                        microphone.record();
+                        element.css('background-color', '#d74108');
+                        element.find('img').attr('src', 'images/stop.svg');
+                        localStorage.setItem('currentlyDisplaying', 'record');
+                    }
+                });
             });
         }
     }

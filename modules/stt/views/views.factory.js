@@ -14,8 +14,7 @@
         return factory;
 
         function initViews(context) {
-            console.log('Initializing views...');
-            console.log('context', utils.getContext);
+            console.log('initViews() called');
             displaymetaFactory.initDisplayMetadata();
         }
     }

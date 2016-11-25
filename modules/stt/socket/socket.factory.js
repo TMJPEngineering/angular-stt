@@ -26,7 +26,6 @@
             var listening;
             var model = options.model || localStorage.getItem('currentModel');
             var message = options.message || { 'action': 'start' };
-            console.log('options (initSocket):', options);
             var socket = connect(options.token, model);
             var tokenGenerator = utils.createTokenGenerator();
 

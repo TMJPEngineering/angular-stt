@@ -18,8 +18,7 @@
         return factory;
 
         function handleMicrophone(token, model, mic, callback) {
-            console.log('handleMicrophone');
-            console.log(token, model);
+            console.log('handleMicrophone() called');
             if (model.indexOf('Narrowband') > -1) {
                 var err = new Error('Microphone transcription cannot accomodate narrowband models, ' +
                     'please select another');
@@ -58,7 +57,6 @@
                 'smart_formatting': true
             };
             options.model = model;
-            console.log('options', options);
 
             function onOpen(socket) {
                 console.log('Mic socket: opened');
@@ -75,8 +73,6 @@
 
             function onMessage(message) {
                 if (message.results) {
-                    // Convert to closure approach
-                    console.log('before: showResult() called');
                     baseString = displaymetaFactory.showResults(message, baseString, model);
                 }
             }
