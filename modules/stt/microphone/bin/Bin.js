@@ -1,4 +1,4 @@
-var Bin = (function() {
+var Bin = function() {
     'use strict';
 
     const RADIUS = 5;
@@ -58,5 +58,5 @@ var Bin = (function() {
 
     return Bin;
 
-})();
+};
 

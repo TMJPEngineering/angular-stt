@@ -3,9 +3,9 @@
 
     angular.module('models')
         .factory('modelFactory', modelFactory);
-    modelFactory.$inject = ['$http'];
+    modelFactory.$inject = ['$http', '$window'];
 
-    function modelFactory($http) {
+    function modelFactory($http, $window) {
         var factory = {
             getModel: getModel
         };
@@ -15,7 +15,7 @@
         function getModel(token) {
             console.log('getModel() called')
 
-            $http.get('https://stream.watsonplatform.net/speech-to-text/api/v1/models', {
+            $http.get($window.__env.modelUrl, {
                 withCredentials: true,
                 headers: {
                     'Accept': 'application/json',

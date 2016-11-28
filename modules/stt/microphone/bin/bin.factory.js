@@ -6,6 +6,6 @@
     BinFactory.$inject = [];
 
     function BinFactory() {
-        return Bin;
+        return Bin();
     }
 })();

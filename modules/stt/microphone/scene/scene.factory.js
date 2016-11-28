@@ -6,6 +6,6 @@
     SceneFactory.$inject = [];
 
     function SceneFactory() {
-        return Scene;
+        return Scene();
     }
 })();

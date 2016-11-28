@@ -1,4 +1,4 @@
-var Scene = (function() {
+var Scene = function() {
     'use strict';
 
     const INITIAL_OFFSET_X = 30;
@@ -133,4 +133,4 @@ var Scene = (function() {
 
     return Scene;
 
-})();
+};

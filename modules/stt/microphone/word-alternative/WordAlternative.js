@@ -1,4 +1,4 @@
-var WordAlternative = (function() {
+var WordAlternative = function() {
     'use strict';
 
     const FONT_SIZE = 16;
@@ -71,4 +71,4 @@ var WordAlternative = (function() {
     };
 
     return WordAlternative;
-})();
+};
