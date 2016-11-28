@@ -9,7 +9,7 @@ require('dotenv').load({ silent: true });
 
 // VIEWS
 app.use('/node_modules', express.static(__dirname + '/node_modules'));
-// app.use('/js/stt.js', expressBrowserify('modules/stt/index.module.js'));
+app.use('/env.js', express.static(__dirname + '/env.js'));
 app.use('/public', express.static(__dirname + '/modules'));
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/views/index.html');

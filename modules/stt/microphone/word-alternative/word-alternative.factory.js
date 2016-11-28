@@ -6,6 +6,6 @@
     WordAlternativeFactory.$inject = [];
 
     function WordAlternativeFactory() {
-        return WordAlternative;
+        return WordAlternative();
     }
 })();

@@ -1,31 +1,19 @@
 (function() {
     'use strict';
 
-    angular.module('stt', [
-            'utils',
-            'views',
-            'microphone',
-            'socket',
-            'models',
-            'toast'
-        ])
-        .constant('lang', {
-            name: 'ja-JP',
-            rate: 16000,
-            description: 'Japanese broadband model'
-        })
+    angular.module('stt')
         .controller('MainController', MainController);
-    MainController.$inject = ['$scope', 'utils', 'modelFactory', '$rootScope', 'initialize', 'lang'];
+    MainController.$inject = ['$scope', 'utils', 'modelFactory', '$rootScope', 'initialize', 'lang', '$window', 'notification'];
 
-    function MainController($scope, utils, modelFactory, $rootScope, initialize, lang) {
+    function MainController($scope, utils, modelFactory, $rootScope, initialize, lang, $window, notification) {
         var vm = this;
-        var bufferSize = 8192;
+        var bufferSize = $window.__env.bufferSize;
 
         angular.element(document).ready(function() {
             var model = {
-                "url": "https://stream.watsonplatform.net/speech-to-text/api/v1/models/" + lang.name + "_BroadbandModel",
+                "url": $window.__env.modelUrl + lang.title,
                 "rate": lang.rate,
-                "name": lang.name + "_BroadbandModel",
+                "name": lang.title,
                 "language": lang.name,
                 "description": lang.description
             };
@@ -42,7 +30,7 @@
                     console.error('No authorization token available');
                     console.error('Attempting to reconnect...');
 
-                    showError('Server error ' + response.status + ': ' + response.data);
+                    notification.showError('Server error ' + response.status + ': ' + response.data);
                 }
 
                 var token = response.data;
@@ -74,20 +62,11 @@
                 localStorage.setItem('currentModel', lang.name + '_BroadbandModel');
                 localStorage.setItem('sessionPermissions', 'true');
 
-                // getModel(token);
                 modelFactory.getModel(viewContext.token);
 
                 $rootScope.$on('clearscreen', function() {
                     $('#resultsText').text('');
-                    $('.error-row').hide();
-                    $('.notification-row').hide();
-                    $('.hypotheses > ul').empty();
-                    $('#metadataTableBody').empty();
                 });
-
-                // TODO: Clearscreen
-                // $scope.on('clearscreen', function(event, data) {
-                // });
             });
         });
     }

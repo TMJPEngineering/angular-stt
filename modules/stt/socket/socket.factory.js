@@ -3,9 +3,9 @@
 
     angular.module('socket')
         .factory('socketFactory', socketFactory);
-    socketFactory.$inject = ['$rootScope', 'notification', 'utils'];
+    socketFactory.$inject = ['$rootScope', 'notification', 'utils', '$window'];
 
-    function socketFactory($rootScope, notification, utils) {
+    function socketFactory($rootScope, notification, utils, $window) {
         var factory = {
             connect: connect,
             initSocket: initSocket
@@ -15,7 +15,7 @@
 
         function connect(token, model) {
             try {
-                return new WebSocket('wss://stream.watsonplatform.net/speech-to-text/api/v1/recognize?watson-token=' + token + '&model=' + model);
+                return new WebSocket($window.__env.webSocketUrl + '?watson-token=' + token + '&model=' + model);
             } catch (error) {
                 notification.showError('WS connection error: ' + error);
                 return;
