@@ -14,7 +14,7 @@
 
     function displaymetaFactory(SceneFactory, BinFactory, WordAlternativeFactory, $timeout) {
         var scene = new SceneFactory();
-        
+
         var factory = {
             showResults: showResults,
             initDisplayMetadata: initDisplayMetadata
@@ -199,6 +199,7 @@
         }
 
         function onHScroll() {
+            console.log('onHScroll');
             if (hslider.value == 0) {
                 leftArrowEnabled = false;
                 rightArrowEnabled = true;
@@ -221,11 +222,14 @@
                 $('#right-arrow').attr('src', 'images/arrow-right-icon.svg');
                 $('#right-arrow').css('background-color', '#C7C7C7');
             }
+            console.log('scene offset X:', scene._offset_X);
             scene._offset_X = INITIAL_OFFSET_X - hslider.value;
             draw();
         }
 
         function onVScroll() {
+            console.log('onVScroll');
+            console.log('scene offset Y:', scene._offset_Y);
             scene._offset_Y = INITIAL_OFFSET_Y + Number(vslider.value);
             draw();
         }
@@ -257,8 +261,7 @@
 
         function draw() {
             canvas.clearRect(0, 0, 970, 370);
-            scene.draw();
-
+            scene.draw(scene._offset_X, scene._offset_Y);
         }
 
         function clearScene() {
@@ -293,6 +296,7 @@
                 $timeout(onTimer, timeout);
             }
         }
+
         function resetWorker() {
             runTimer = false;
             worker.postMessage({

@@ -21,9 +21,9 @@ var Scene = (function() {
         this._shift = 100;
     };
 
-    Scene.prototype.draw = function() {
-        var offsetX = this._offsetX;
-        var offsetY = this._offsetY;
+    Scene.prototype.draw = function(offsetX, offsetY) {
+        var offsetX = offsetX;
+        var offsetY = offsetY;
         var lastBinEndTime = 0;
 
         for (var counter = 0; counter < this._bins.length; counter++) {
