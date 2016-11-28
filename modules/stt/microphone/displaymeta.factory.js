@@ -30,13 +30,10 @@
             canvas = element.getContext('2d'),
             keywordsInputDirty = false,
             worker = null,
-            leftArrowEnabled = false,
-            rightArrowEnabled = false,
             runTimer = false,
             scrolled = false,
             pushed = 0,
-            popped = 0,
-            showAllHypotheses = true;
+            popped = 0;
 
         return factory;
 
@@ -55,13 +52,12 @@
                 onHScroll();
             });
             $('#vslider').on('change mousemove', function() {
+
                 onVScroll();
             });
 
             $('#canvas').css('display', 'none');
             $('#canvas-placeholder').css('display', 'block');
-            $('#left-arrow').css('display', 'none');
-            $('#right-arrow').css('display', 'none');
 
             onResize(); // to adjust the canvas size
 
@@ -102,30 +98,29 @@
             hslider.max = scene.width() - canvas.width + INITIAL_OFFSET_X;
             hslider.value = hslider.max;
             onHScroll();
+            onVScroll();
 
-            if (vslider.min < 0 && showAllHypotheses) {
+            if (vslider.min < 0) {
                 $('#vslider').css('display', 'block');
             }
             $('#hslider').css('display', 'block');
-            $('#show_alternate_words').css('display', 'inline-block');
             $('#canvas').css('display', 'block');
             $('#canvas-placeholder').css('display', 'none');
-            $('#left-arrow').css('display', 'inline-block');
-            $('#right-arrow').css('display', 'inline-block');
+
         }
 
         function parseAlternative(element /*, index, array*/ ) {
             var confidence = element['confidence'];
             var word = element['word'];
             var bin = scene._bins[scene._bins.length - 1];
-            bin.addWordAlternative(new WordAlternative(word, confidence));
+            bin.addWordAlternative(new WordAlternativeFactory(word, confidence));
         }
 
         function parseBin(element /*, index, array*/ ) {
             var start_time = element['start_time'];
             var end_time = element['end_time'];
             var alternatives = element['alternatives'];
-            var bin = new Bin(start_time, end_time);
+            var bin = new BinFactory(start_time, end_time);
             scene.addBin(bin);
             alternatives.forEach(parseAlternative);
         }
@@ -199,28 +194,6 @@
         }
 
         function onHScroll() {
-            if (hslider.value == 0) {
-                leftArrowEnabled = false;
-                rightArrowEnabled = true;
-                $('#left-arrow').attr('src', 'images/arrow-left-icon-disabled.svg');
-                $('#left-arrow').css('background-color', 'transparent');
-                $('#right-arrow').attr('src', 'images/arrow-right-icon.svg');
-                $('#right-arrow').css('background-color', '#C7C7C7');
-            } else if (hslider.value == Math.floor(hslider.max)) {
-                leftArrowEnabled = true;
-                rightArrowEnabled = false;
-                $('#left-arrow').attr('src', 'images/arrow-left-icon.svg');
-                $('#left-arrow').css('background-color', '#C7C7C7');
-                $('#right-arrow').attr('src', 'images/arrow-right-icon-disabled.svg');
-                $('#right-arrow').css('background-color', 'transparent');
-            } else {
-                leftArrowEnabled = true;
-                rightArrowEnabled = true;
-                $('#left-arrow').attr('src', 'images/arrow-left-icon.svg');
-                $('#left-arrow').css('background-color', '#C7C7C7');
-                $('#right-arrow').attr('src', 'images/arrow-right-icon.svg');
-                $('#right-arrow').css('background-color', '#C7C7C7');
-            }
             scene._offset_X = INITIAL_OFFSET_X - hslider.value;
             draw();
         }
@@ -273,14 +246,9 @@
             vslider.value = vslider.max;
             $('#hslider').css('display', 'none');
             $('#vslider').css('display', 'none');
-            $('#show_alternate_words').css('display', 'none');
             $('#canvas').css('display', 'none');
             $('#canvas-placeholder').css('display', 'block');
-            $('#left-arrow').css('display', 'none');
-            $('#right-arrow').css('display', 'none');
 
-            showAllHypotheses = true;
-            $('#show_alternate_words').text('Hide alternate words');
             canvas.clearRect(0, 0, canvas.width, canvas.height);
         }
 
