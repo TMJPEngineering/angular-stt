@@ -14,7 +14,7 @@
 
     function displaymetaFactory(SceneFactory, BinFactory, WordAlternativeFactory, $timeout) {
         var scene = new SceneFactory();
-        
+
         var factory = {
             showResults: showResults,
             initDisplayMetadata: initDisplayMetadata
@@ -257,8 +257,7 @@
 
         function draw() {
             canvas.clearRect(0, 0, 970, 370);
-            scene.draw();
-
+            scene.draw(scene._offset_X, scene._offset_Y);
         }
 
         function clearScene() {
@@ -293,6 +292,7 @@
                 $timeout(onTimer, timeout);
             }
         }
+
         function resetWorker() {
             runTimer = false;
             worker.postMessage({

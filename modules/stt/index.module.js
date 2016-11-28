@@ -9,20 +9,25 @@
             'models',
             'toast'
         ])
+        .constant('lang', {
+            name: 'ja-JP',
+            rate: 16000,
+            description: 'Japanese broadband model'
+        })
         .controller('MainController', MainController);
-    MainController.$inject = ['$scope', 'utils', 'modelFactory', '$rootScope', 'initialize'];
+    MainController.$inject = ['$scope', 'utils', 'modelFactory', '$rootScope', 'initialize', 'lang'];
 
-    function MainController($scope, utils, modelFactory, $rootScope, initialize) {
+    function MainController($scope, utils, modelFactory, $rootScope, initialize, lang) {
         var vm = this;
         var bufferSize = 8192;
 
         angular.element(document).ready(function() {
             var model = {
-                "url": "https://stream.watsonplatform.net/speech-to-text/api/v1/models/ja-JP_BroadbandModel",
-                "rate": 16000,
-                "name": "ja-JP_BroadbandModel",
-                "language": "ja-JP",
-                "description": "Japanese broadband model."
+                "url": "https://stream.watsonplatform.net/speech-to-text/api/v1/models/" + lang.name + "_BroadbandModel",
+                "rate": lang.rate,
+                "name": lang.name + "_BroadbandModel",
+                "language": lang.name,
+                "description": lang.description
             };
 
             var tokenGenerator = utils.createTokenGenerator();
@@ -42,7 +47,7 @@
 
                 var token = response.data;
                 var viewContext = {
-                    currentModel: 'ja-JP_BroadbandModel',
+                    currentModel: lang.name + '_BroadbandModel',
                     models: model,
                     token: token,
                     bufferSize: bufferSize
@@ -66,7 +71,7 @@
                 }
 
                 // Set default current model
-                localStorage.setItem('currentModel', 'ja-JP_BroadbandModel');
+                localStorage.setItem('currentModel', lang.name + '_BroadbandModel');
                 localStorage.setItem('sessionPermissions', 'true');
 
                 // getModel(token);
